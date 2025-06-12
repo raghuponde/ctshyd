@@ -445,7 +445,7 @@ console.log(morethan20);
 
 Arrrays 
 ----------
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -482,6 +482,15 @@ Arrrays
         }
         console.log(kk2);
 // same as let but i cannot reassign it 
+    let cars=["BMW","Honda","Skoda","Bughati"];
+    document.getElementById("demo").innerHTML=cars;
+
+    //firt car
+    let firstcar=cars[0];
+    document.getElementById("demo").innerHTML+= "<br>First car: " + firstcar;
+    //no element in array 
+    let length=cars.length;
+        document.getElementById("demo").innerHTML += "<br>length: " +length;
     </script>
 </body>
 </html>
