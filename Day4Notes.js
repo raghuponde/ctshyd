@@ -491,6 +491,26 @@ Arrrays
     //no element in array 
     let length=cars.length;
         document.getElementById("demo").innerHTML += "<br>length: " +length;
+    //last element;
+    let lastele=cars[cars.length-1];
+    document.getElementById("demo").innerHTML += "<br>last ele: " + lastele;
+
+    // adding car at the last 
+    cars.push("AUDI");
+    document.getElementById("demo").innerHTML +="<br>fresh list:" +cars;
+     //adding at the begining
+     cars.unshift("XUV");
+     document.getElementById("demo").innerHTML += "<br>fresh list:" + cars;
+     //removing first car
+     cars.shift();
+     document.getElementById("demo").innerHTML += "<br>fresh list:" + cars;
+
+     let bikes=["gixxer","yamaha","apache"];
+
+     let vehichles=cars.concat(bikes);
+     document.getElementById("demo").innerHTML += "<br>full list:" +vehichles;
+
+    //check it above 
     </script>
 </body>
 </html>
