@@ -81,3 +81,38 @@ updated code
     </script>
 </body>
 </html>
+
+JavaScript uses dialog boxes to interact with the user. The dialog boxes are created with three methods:
+
+alert()
+prompt()
+confirm()
+alert:
+------
+We saw in the last chapter that the write() and writeln() were JavaScript methods used to send output to the Web page. Another way to send output to the browser is with the alert() method. The alert() method creates a little independent box—called a dialog box—which contains a small triangle with an exclamation point. 
+
+syntax:
+
+alert("String of plain text");
+alert(expression);
+
+eg:
+alert("Phone number is incorrect");
+alert(a + b);
+prompt :
+-------
+Since JavaScript does not provide a simple method for accepting user input , the prompt dialog box and HTML forms are used  The prompt dialog box pops up with a simple textfield box.
+
+syntax:
+prompt(message);
+prompt(message, defaultText);
+
+eg:
+prompt("What is your name? ", "");
+prompt("Where is your name? ", name);
+
+The Confirm Box:
+-----------------
+The confirm dialog box is used to confirm a user's answer to a question. A question mark will appear in the box with an OK button and a Cancel button. If the user presses the OK button, true is returned; if he presses the Cancel button, false is returned. This method takes only one argument, the question you will ask the user.
+
+
