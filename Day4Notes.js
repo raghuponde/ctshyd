@@ -248,3 +248,37 @@ udpated code using trim and ===
 </body>
 
 </html>
+
+Regular Expression in Javascript :
+---------------------------------------------
+Till now i have done validations to a form or a form fields using normal procedure like which is nothing but basic validations where we will see that mandatory fields are filled but as per the requirement i want to validate the input which i pass in 
+the textbox then i will go regular expressions 
+
+
+regular expressions are there in .net also and also in javascript 
+
+
+pan card : five chaarcters ,4 numbers and one again alphabet 
+
+some sites to refer :
+
+https://regexhero.net/  
+
+to test without program 
+
+https://regexr.com/  go through this website throghly instructions
+
+and in google type 
+
+regex in javascript and check some tutorials as well and 
+in youtube also u can check it by putting the same 
+
+
+https://www.w3schools.com/jsref/jsref_obj_regexp.asp
+
+https://www.programiz.com/javascript/regex
+
+in youtube :
+
+
+https://www.youtube.com/watch?v=nlGF-zh0fsg
