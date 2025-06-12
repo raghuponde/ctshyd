@@ -353,3 +353,22 @@ udpated code
 
 </body>
 </html>
+
+
+now wrtie one file onlyjsdemo1.js
+-------------------------------------
+  function test()
+{
+    console.log("hello world");
+}
+test();
+function test2(num1, num2)
+{
+    return (num1 + num2);
+}
+
+var sum = test2(12, 67);
+console.log(sum);
+
+open the terminal and say node filename
+
