@@ -374,7 +374,7 @@ var sum = test2(12, 67);
 console.log(sum);
 
 function test5(number)
-{
+{ 
     return number + 10;
 }
 console.log('the sum is ' + test5(23));
