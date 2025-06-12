@@ -400,6 +400,46 @@ console.log(person.name);
 var { name:name1,age: age1, mail:mail1 } = person;
 console.log(age1);
 
+//now let us do spread operator means adding or spreading the data
+
+arr1 = [10, 20, 30, 40];
+arr2 = [50, 60];
+arr3 = [...arr1, 50, 60]
+arr4 = [...arr1, ...arr2];
+console.log(arr3);
+console.log(arr4);
+
+var bigobj = {
+    ...person,
+    sal: 34000,
+    location:"hyderabad"
+}
+
+console.log(bigobj.name + " is having salary " + bigobj.sal);
+
+//variable.map((element)=>print(element));
+
+var arrr = [10, 20, 30, 40, 50];
+arrr.map((ele) => console.log(ele));
+
+// increment each elment by 2
+
+var multiplyby2 = arrr.map((ele) => ele * 2);
+console.log(multiplyby2);
+
+var people = [{ id: 101, name: "suresh", country: "USA" },
+    { id: 102, name: "sita", country: "India" },
+    { id: 103, name: "john", country: "UK" }
+]
+
+people.map((p) =>
+    console.log('the person ' + p.name + ' is from ' + p.country))
+
+//filter function
+// array.filter((element)=>condtion)
+
+var array = [10, 20, 30, 40, 50];
+var morethan20 = array.filter((element) => element > 20);
+console.log(morethan20);
 
 
-  
