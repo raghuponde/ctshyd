@@ -305,3 +305,51 @@ email validation code put in body of html
     </form>
 
 
+udpated code 
+--------------
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+    function validate()
+    {
+        var mail=document.getElementById('text').value;
+        var regex=/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if(regex.test(mail))
+       {
+            document.getElementById('result').innerHTML="valid email";
+            document.getElementById('result').style.color="green";
+            return true;
+       }
+       else
+       {
+        document.getElementById('result').innerHTML = "Invalid email";
+            document.getElementById('result').style.color = "red";
+            return false;
+       }
+    }
+</script>
+<body>
+    <form>
+        <table>
+            <tr>
+                <td>
+                    <input type="text" placeholder="email" id="text" />
+                </td>
+                <td>
+                    <div id="result">
+    
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br /><br />
+        <button onclick="validate()" type="button">Submit</button>
+    </form>
+
+</body>
+</html>
