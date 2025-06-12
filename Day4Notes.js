@@ -383,4 +383,23 @@ console.log('the sum is ' + test5(23));
 var test6 = (n) => n + 10;
 console.log(test6(25));
 
+Now let us move to new topic destructing and spreads in js and how to declare objects in js 
+-------------------------------------------------------------------------------------------------
+var person = {
+    name: "john",
+    age: 23,
+    mail: "john@gmail.com"
+}
 
+// above is the way to declare objects in js 
+console.log(person.age);
+console.log(person.name);
+//suppose i want to display without using base name
+//console.log(age);//this is not possible
+// i need to do destructuring
+var { name:name1,age: age1, mail:mail1 } = person;
+console.log(age1);
+
+
+
+  
