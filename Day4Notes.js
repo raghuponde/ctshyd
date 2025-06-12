@@ -382,3 +382,5 @@ console.log('the sum is ' + test5(23));
 //arrow function 
 var test6 = (n) => n + 10;
 console.log(test6(25));
+
+
