@@ -115,4 +115,29 @@ The Confirm Box:
 -----------------
 The confirm dialog box is used to confirm a user's answer to a question. A question mark will appear in the box with an OK button and a Cancel button. If the user presses the OK button, true is returned; if he presses the Cancel button, false is returned. This method takes only one argument, the question you will ask the user.
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var name=prompt("what is your name?","enter name");
+        var age=prompt("what is your age ","age please");
+        document.write("This employee with  "+name+" is "+age+"old");
+        alert("This employee with  " + name + " is " + age + "old");
+    </script>
+    <script>
+        var one=prompt("enter first number","enter 1st number");
+        var two=prompt("enter second number","enter 2 number");
+        var total=parseFloat(one)+parseFloat(two);
+      if(confirm("do u want me to display total?")==true)
+      {
+        alert(total);
 
+      }
+    </script>
+</body>
+</html>
