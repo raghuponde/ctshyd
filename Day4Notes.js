@@ -357,18 +357,28 @@ udpated code
 
 now wrtie one file onlyjsdemo1.js
 -------------------------------------
-  function test()
+function test()
 {
     console.log("hello world");
 }
+var test1 = () => console.log("hello world");//arrow function
+test1();
 test();
 function test2(num1, num2)
 {
     return (num1 + num2);
 }
-
+var test3 = (a, b) => (a + b);//arrow function
+console.log(test3(12, 45));
 var sum = test2(12, 67);
 console.log(sum);
 
-open the terminal and say node filename
+function test5(number)
+{
+    return number + 10;
+}
+console.log('the sum is ' + test5(23));
 
+//arrow function 
+var test6 = (n) => n + 10;
+console.log(test6(25));
