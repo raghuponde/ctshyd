@@ -445,4 +445,43 @@ console.log(morethan20);
 
 Arrrays 
 ----------
-  
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="demo" style="background-color:yellow ;
+    width:90%;height:100px;font-size:large;font-weight:900px;">
+    
+   </p>
+    <script>
+        //differcne between var ,let and const in js
+        var kk="hai";
+        kk="hello";
+        {
+            var kk="good"
+        }
+        console.log(kk);
+       
+        let kk1 = "hai";
+            kk1 = "hello";
+            {
+               let  kk1 = "good"
+            }
+            console.log(kk1);
+        // here let is scope level variable in which scope u put that will display
+        //const once declared i cannot reassign 
+
+        const kk2="Hi";
+       // kk2="helloeveryone";//errro as const 
+        {
+            const kk2="hi agaiin";
+        }
+        console.log(kk2);
+// same as let but i cannot reassign it 
+    </script>
+</body>
+</html>
