@@ -251,7 +251,9 @@ udpated code using trim and ===
 
 Regular Expression in Javascript :
 ---------------------------------------------
-Till now i have done validations to a form or a form fields using normal procedure like which is nothing but basic validations where we will see that mandatory fields are filled but as per the requirement i want to validate the input which i pass in 
+Till now i have done validations to a form or a form fields using normal 
+  procedure like which is nothing but basic validations where we will see 
+    that mandatory fields are filled but as per the requirement i want to validate the input which i pass in 
 the textbox then i will go regular expressions 
 
 
@@ -282,3 +284,24 @@ in youtube :
 
 
 https://www.youtube.com/watch?v=nlGF-zh0fsg
+
+email validation code put in body of html
+-------------------------
+    <form>
+        <table>
+            <tr>
+                <td>
+                    <input type="text" placeholder="email" id="text" />
+                </td>
+                <td>
+                    <div id="result">
+    
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br /><br />
+        <button onclick="validate()" type="button">Submit</button>
+    </form>
+
+
