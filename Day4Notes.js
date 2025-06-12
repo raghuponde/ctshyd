@@ -178,45 +178,41 @@ take this desing into the body of html
  </tr>
  </table> </form>
   
-udpated code 
-----------------
-  <!DOCTYPE html>
+udpated code using trim and ===
+------------------------------------
+ <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script>
-        function validate()
-        {
-          if(document.myForm.Name.value=="")
-          {
-            alert("please provide name");
-            document.myForm.Name.focus();
-            return false;
-          }
-          if (document.myForm.Email.value == "") {
-                alert("please provide email");
-                document.myForm.Email.focus();
+    <script type="text/javascript">
+        function validate() {
+            if (document.myForm.Name.value.trim() === "") {
+                alert("please provide name");
+                document.myForm.Name.focus();
                 return false;
             }
-            if (document.myForm.Zip.value == "" 
-            || isNaN(document.myForm.Zip.value) ||
-             document.myForm.Zip.value.length!=5)
-              {
+            if (document.myForm.EMail.value.trim() === "") {
+                alert("please provide email");
+                document.myForm.EMail.focus();
+                return false;
+            }
+            if (document.myForm.Zip.value.trim() === "" || isNaN(document.myForm.Zip.value.trim()) || document.myForm.Zip.value.length !=5) {
                 alert("please provide proper zip code #####");
                 document.myForm.Zip.focus();
                 return false;
             }
-            if(document.myForm.Country.value=="-1")
-            {
+            if (document.myForm.Country.value == "-1") {
                 alert("please provide country");
                 return false;
             }
-            return true;
+            return (true);
         }
     </script>
 </head>
+
 <body>
     <form action="/cgi-bin/test.cgi" name="myForm" onsubmit="return(validate());">
         <table cellspacing="2" cellpadding="2" border="1">
@@ -226,7 +222,7 @@ udpated code
             </tr>
             <tr>
                 <td align="right">EMail</td>
-                <td><input type="mail" name="EMail" / required></td>
+                <td><input type="email" name="EMail" required /></td>
             </tr>
             <tr>
                 <td align="right">Zip Code</td>
@@ -250,4 +246,5 @@ udpated code
         </table>
     </form>
 </body>
+
 </html>
