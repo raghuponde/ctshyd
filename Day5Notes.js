@@ -272,6 +272,24 @@ and finally open the folder in vscode
 add one file index.html in the downloaded fodler having css and js folder 
 and code is below 
 
+
+For designing first learn bootstrap from this link 
+
+https://www.w3schools.com/bootstrap5/
+
+
+and after learning go to this link 
+
+https://getbootstrap.com/docs/5.0/getting-started/introduction/
+
+and in this in search type what u want like forms ,dropdowns etc 
+
+some code will come try to analize it and replace that code with  your desing code which u need it 
+
+
+bootswatch.com is another site for taking code into desing 
+
+
 <!DOCTYPE html>
 <html lang="en">
 
