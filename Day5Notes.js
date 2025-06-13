@@ -567,4 +567,16 @@ index3.html
 </body>
 </html>
 
-
+i want to generate the template which i have developed in html css using bootstrap 
+including register.html page so for this 
+I am giving both the codes to chatgpt and i am getting the code what happens 
+is that all css cannot be replaced some css it will keep and manily layouts are altered 
+by using bootstrap so you have to anilize which Which style is taken by css and 
+which is taken by bootsrap for that u have to go through the documentation of 
+bootstrap or if u dont have time ask chat gpt only explain the code which it 
+has genrated to explain line by line 
+index4.html 
+-------------
+	
+register.html
+----------------
