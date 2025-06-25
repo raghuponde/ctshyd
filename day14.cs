@@ -653,6 +653,114 @@ namespace StringInBuiltFunctions
         }
     }
 }
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+
+namespace StringDemo1
+{
+    // array of chars we call it as string it can be used as 
+    // data type or as a class also two things important 
+    // strings are immutable means i cannot change i can override 
+    // the same string by putting updated value but i cannot change
+    // the string and string are referecne type ..
+    //but string builder is not immutable it is changable 
+    // we should not declare strings simply as it occupies memory 
+    // so use string builder one time and in that object only append 
+    // values ...
+    // put debugger by clicking the side bar 
+    // F11 means line by line 
+    //F10 means skips function 
+    // shift + f11 means come out of the function 
+    class Program
+    {
+        public static void concat1(string s1)
+        {
+            string st = "world";
+            s1 = st + s1;
+        }
+
+        public static void concat2(StringBuilder s2)
+        {
+            s2.Append("everyone");
+        }
+
+        public static void equalsexample()
+        {
+
+            string s1 = "hello";
+            string s2 = "hello";
+            string s3 = "kkkk";
+            Console.WriteLine("{0}", s1.Equals(s2));
+            s2 = s3;
+            Console.WriteLine("{0}", s1.Equals(s2));
+            Console.WriteLine("{0}", (s1==s2));
+            Console.WriteLine("{0}", (s2==s3));
+
+
+
+        }
+        static void Main(string[] args)
+        {
+            //string str;
+            //str = "Hello every body welcome to .net ";
+            //Console.WriteLine("{0}", str);
+            //string firstname;
+            //string middlename;
+            //string lastname;
+            //Console.WriteLine("enter firstname :");
+            //firstname = Console.ReadLine();
+            //Console.WriteLine("enter middle name ");
+            //middlename = Console.ReadLine();
+            //Console.WriteLine("enter last name ");
+            //lastname = Console.ReadLine();
+            //string fullname = firstname + " " + middlename + " " + lastname;
+            //string fullname2 = string.Concat(firstname, " ", middlename, " ", lastname);
+            //Console.WriteLine("{0}", fullname.ToUpper());
+            //Console.WriteLine("{0}", fullname2.ToLower());
+            //Console.WriteLine("enter new first name to replace ...");
+            //string newfirstname = Console.ReadLine();
+            //Console.WriteLine("The new fullname is " + fullname.Replace(firstname, newfirstname));
+            //// extract middle name 
+            //Console.WriteLine("The midde name is " + fullname.Substring(5, 5));
+            // strings are immutable 
+
+            string s1 = "hello";
+            StringBuilder s2 = new StringBuilder("hai");
+            concat1(s1);
+            concat2(s2);
+            Console.WriteLine("{0}--{1}", s1, s2);
+            equalsexample();
+
+            string[] weekdays = {"Monday","Tuesday","wednesday","Thursday","Friday",
+                "Saturday"};
+            // i want like this Monday ,Tuesday,Wednesday,
+            // Thursday,Friday and Stautday 
+
+            StringBuilder sb = new StringBuilder();
+           for(int i=0;i<weekdays.Length;i++)
+            {
+                sb.Append(weekdays[i]);
+                if(i<weekdays.Length-2)
+                {
+                    sb.Append(',');
+                }
+                else if(i==weekdays.Length-2)
+                {
+                    sb.Append(" and ");
+                }
+            }
+           Console.WriteLine(sb.ToString());
+            Console.ReadLine();
+
+            
+        }
+    }
+}
+
 
 Nullable Types in C#
 ----------------------
@@ -723,3 +831,5 @@ namespace NullableTypes
         }
     }
 }
+
+
