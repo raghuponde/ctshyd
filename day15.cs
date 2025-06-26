@@ -884,6 +884,102 @@ namespace Generic_ListDemo
 }
 
 
+Generic Dictionary demo 
+---------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ditionarydemo
+{
+    class Customer
+    {
+        public int CustomerID { set; get; }
+        public string CustomerName { set; get; }
+
+        public override string ToString()
+        {
+            return string.Format("{0}--{1}", this.CustomerID, this.CustomerName);
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Dictionary<int,string> dictionaryobj= new Dictionary<int,string>();
+            Console.WriteLine("enter number of elements to enter in dictionary..");
+            int counter=Convert.ToInt32(Console.ReadLine());
+            for (int i = 0; i < counter; i++)
+            {
+                Console.WriteLine("Enter Key :");
+                int key=Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("enter value:");
+                string nameofos=Console.ReadLine();
+                dictionaryobj.Add(key, nameofos);
+            }
+            Console.WriteLine("\n printing the dictionary...");
+            foreach(KeyValuePair<int,string> pair in dictionaryobj) 
+            {
+            
+            Console.WriteLine("{0}--{1}",pair.Key,pair.Value);
+            
+            }
+            Console.WriteLine("\n printing dictionary using var ..");
+            foreach(var pair in dictionaryobj)
+            {
+                Console.WriteLine("{0}--{1}", pair.Key, pair.Value);
+            }
+            Console.WriteLine("\n which key is having largest length value ");
+            int largestlength = 0;
+            for (int count1 = 0; count1 < dictionaryobj.Count; count1++)
+            {
+                var element = dictionaryobj.ElementAt(count1);
+
+                int length = element.Value.Length;
+
+                if (largestlength < length)
+                {
+
+                    largestlength = length;
+                }
+
+            }
+           foreach (var item in dictionaryobj)
+            {
+                if (item.Value.Length == largestlength)
+                {
+                    Console.WriteLine("The key of largestlength value is " + item.Key);
+                }
+            }
+            // or
+            Console.WriteLine("{0}", dictionaryobj.Values.Max());
+            //using code i want to find out ..
+            Dictionary<int, Customer> dictionaryofcust = new Dictionary<int, Customer>()
+            {
+
+                {1001,new Customer{CustomerID=101,CustomerName="sudha"} },
+                  {1002,new Customer{CustomerID=102,CustomerName="suresh"} },
+                   {1003,new Customer{CustomerID=103,CustomerName="kiran"} }
+
+            };
+            Console.WriteLine("\n prinitng the customer dictionary ...");
+            foreach (var customer in dictionaryofcust)
+            {
+                Console.WriteLine("{0}--{1}", customer.Key, customer.Value);
+            }
+
+
+
+            Console.ReadLine();
+
+
+        }
+    }
+}
+
+
 Reusable Features from C#.net :(Assemblies  ) 
 _________________________________________________________________________________________
 whatver program we are writing we are writing  in some namesapce when we build them then assembly is created for the program 
