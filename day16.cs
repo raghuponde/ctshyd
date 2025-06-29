@@ -540,7 +540,7 @@ namespace Abstractclassandinterfacedemo
         {
             InitializeComponent();
         }
-        public abstract class Polygon
+        public abstract class Polygon 
         {
             public void testfunction()
             {
