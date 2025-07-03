@@ -1,74 +1,3 @@
-Extension Methods :
-------------------
-Extension methods in C# are a powerful feature that allows you to "add" methods to existing types without modifying the original type or creating a new derived type. This is particularly useful when you want to add functionality to classes that you don't have the source code for or can't modify (such as classes from the .NET framework).
-
-How Extension Methods Work
-Extension methods are static methods defined in static classes. They are called as if they were instance methods on the extended type. The first parameter of an extension method specifies which type the method extends, and it is preceded by the this keyword.
-
-
-
-using System;
-
-public static class StringExtensions
-{
-    // Extension method to check if a string is a palindrome
-    public static bool IsPalindrome(this string str)
-    {
-        if (string.IsNullOrEmpty(str))
-            return false;
-
-        int i = 0;
-        int j = str.Length - 1;
-
-        while (i < j)
-        {
-            if (str[i] != str[j])
-                return false;
-            i++;
-            j--;
-        }
-
-        return true;
-    }
-}
-
-class Program
-{
-    static void Main()
-    {
-        string example1 = "madam";
-        string example2 = "hello";
-
-        // Using the extension method as if it were an instance method
-        Console.WriteLine(example1.IsPalindrome()); // Output: True
-        Console.WriteLine(example2.IsPalindrome()); // Output: False
-    }
-}
-using System;
-
-public static class IntExtensions
-{
-    // Extension method to check if an integer is odd
-    public static bool IsOdd(this int number)
-    {
-        // A number is odd if it is not divisible by 2
-        return number % 2 != 0;
-    }
-}
-
-class Program
-{
-    static void Main()
-    {
-        int number1 = 5;
-        int number2 = 8;
-
-        // Using the extension method IsOdd on integers
-        Console.WriteLine($"{number1} is odd: {number1.IsOdd()}"); // Output: 5 is odd: True
-        Console.WriteLine($"{number2} is odd: {number2.IsOdd()}"); // Output: 8 is odd: False
-    }
-}
-
 
 Data sources means which provides data 
 
@@ -402,8 +331,6 @@ namespace ConsoleApp6
 
 constructor demos 
 -------------------
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -635,6 +562,77 @@ namespace structstudentdemo
 }
 
 
+
+Extension Methods :
+------------------
+Extension methods in C# are a powerful feature that allows you to "add" methods to existing types without modifying the original type or creating a new derived type. This is particularly useful when you want to add functionality to classes that you don't have the source code for or can't modify (such as classes from the .NET framework).
+
+How Extension Methods Work
+Extension methods are static methods defined in static classes. They are called as if they were instance methods on the extended type. The first parameter of an extension method specifies which type the method extends, and it is preceded by the this keyword.
+
+
+
+using System;
+
+public static class StringExtensions
+{
+    // Extension method to check if a string is a palindrome
+    public static bool IsPalindrome(this string str)
+    {
+        if (string.IsNullOrEmpty(str))
+            return false;
+
+        int i = 0;
+        int j = str.Length - 1;
+
+        while (i < j)
+        {
+            if (str[i] != str[j])
+                return false;
+            i++;
+            j--;
+        }
+
+        return true;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        string example1 = "madam";
+        string example2 = "hello";
+
+        // Using the extension method as if it were an instance method
+        Console.WriteLine(example1.IsPalindrome()); // Output: True
+        Console.WriteLine(example2.IsPalindrome()); // Output: False
+    }
+}
+using System;
+
+public static class IntExtensions
+{
+    // Extension method to check if an integer is odd
+    public static bool IsOdd(this int number)
+    {
+        // A number is odd if it is not divisible by 2
+        return number % 2 != 0;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        int number1 = 5;
+        int number2 = 8;
+
+        // Using the extension method IsOdd on integers
+        Console.WriteLine($"{number1} is odd: {number1.IsOdd()}"); // Output: 5 is odd: True
+        Console.WriteLine($"{number2} is odd: {number2.IsOdd()}"); // Output: 8 is odd: False
+    }
+}
 
 
 
