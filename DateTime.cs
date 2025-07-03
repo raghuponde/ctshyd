@@ -1,3 +1,19 @@
+| Concept            | Method / Property                                 |
+| ------------------ | ------------------------------------------------- |
+| Current Time       | `DateTime.Now`, `DateTime.UtcNow`                 |
+| Creating Date      | `new DateTime(...)`                               |
+| Add/Subtract       | `AddDays`, `AddMonths`, `AddHours`, etc.          |
+| Date Difference    | `TimeSpan` subtraction                            |
+| Comparison         | `==`, `<`, `CompareTo()`                          |
+| Formatting         | `ToString("format")`, `ToShortDateString()`, etc. |
+| Parsing            | `Parse`, `TryParse`                               |
+| Date Info          | `Year`, `Month`, `Day`, `DayOfWeek`, etc.         |
+| Date Limits        | `MinValue`, `MaxValue`                            |
+| Advanced Types     | `DateOnly`, `TimeOnly` (C# 10+)                   |
+| Ticks              | `Ticks`                                           |
+| Culture Formatting | `CultureInfo`                                     |
+
+
 using System;
 
 class DateTimeDemo
