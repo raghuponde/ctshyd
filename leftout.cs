@@ -105,305 +105,299 @@ syntax will be like sql way but select comes last and from comes first and in be
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linqdemo1
+namespace ConsoleApp6
 {
-     class Program
-    {
-        public static void  vowelscountinstring(string input)
-        {
-            var vowels = input.Where(x => "aeiou".Contains(x));
-            var vowelscount = vowels.Count();
-            Console.WriteLine("The string {0} is having {1} no of vowels ", input, vowelscount);
-        }
-        static void Main(string[] args)
-        {
-            int[] numbers = new int[] { 12, 34, 56, 1, 3, 4, 6, 100, 123, 51, 39, 45 };
-            string[] names = new string[] { "Kiran", "Kishore", "Mahesh", "Suresh", "Sita" };
-            //give me numbers which are greater than 20 
+	public class Employee
+	{
+		public int EmployeeID { set; get; }
+		public string FirstName { set; get; }
+		public string LastName { set; get; }
+		public string City { set; get; }
+		public int  Sal { set; get; }
 
-            var query1 = from number in numbers where number > 20 select number;//query syntax 
-            var query2 = numbers.Where(x => x > 20);// method syntax 
+	}
 
-            Console.WriteLine("\n The numbers greater than 20 are:");
-            foreach(int num in query1)// here query2 also u can put same output u will get 
-            {
-                Console.Write("{0,5}", num);
-            }
-            // give me all odd numbers 
+	class DepartmentClass
+	{
+		public int DepartmentId { get; set; }
+		public string Name { get; set; }
+	}
+	class EmployeeClass
+	{
+		public int EmployeeId { get; set; }
+		public string EmployeeName { get; set; }
+		public int DepartmentId { get; set; }//fk 
+	}
 
-            var query3 = from number in numbers where number % 2 != 0 select number;
-            var query4 = numbers.Where(x => x % 2 != 0);
-            Console.WriteLine("\n The odd numbers are : ");
-            foreach(int num in query4)
-            {
-                Console.Write("{0,5}", num);
-            }
-            // give the all the names starting from capital K 
+	public class Employeerepository
+	{
+		public static List<Employee> Retrive()
+		{
 
-            var query5 = from name in names where name.StartsWith("K") select name;// query syntax
-            var query6 = names.Where(x => x.StartsWith("K"));
-            Console.WriteLine("\n Names starting with K :");
-            foreach(string name1 in query6)
-            {
-                Console.WriteLine("{0}", name1);
-            }
-            // give me number of character count in each name 
-            var query7 = from name in names select name;
-            var query8 = names;
-            Console.WriteLine("\n no  of characters count in each name is :");
-            foreach(string name2 in query7)
-            {
-                Console.WriteLine("{0}--{1}", name2, name2.Length);
-            }
-            Console.WriteLine("\n enter a input string to count no of vowels in that string..");
-            string input = Console.ReadLine();
-            vowelscountinstring(input);
-            Console.ReadLine();
+			List<Employee> emplist = new List<Employee>()
+			{
+
+				new Employee{EmployeeID=101,FirstName="sudha",LastName="rani",City="Bangalore",Sal=34000},
+				new Employee{EmployeeID=102,FirstName="Madhu",LastName="sudhan",City="Chennai",Sal=30000},
+                 new Employee{EmployeeID=103,FirstName="Kiran ",LastName="Kumar",City="Delhi",Sal=35000},
+
+                new Employee{EmployeeID=104,FirstName="sita",LastName="rani",City="Hyderabad",Sal=25000},
+
+               new Employee{EmployeeID=105,FirstName="rakesh",LastName="sharma",City="Bangalore",Sal=19000},
+
+               new Employee{EmployeeID=106,FirstName="Mahesh",LastName="Babu",City="Mysore",Sal=36000},
 
 
 
-        }
-    }
-}
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+			};
 
-namespace ConsoleApplication6
-{
+			return emplist;
 
-   public  class Customer
-    {
-        public int CustomerID { set; get; }
-        public string FirstName { set; get; }
-        public string LastName { set; get; }
-        public string City { set; get; }
+		}
 
+	}
+	class Program
+	{
+		public static void  findvowelcout(string input)
+		{
 
-    }
+			var vowels=input.Where(x=>"aeiou".Contains(x));
+			var vowelscount = vowels.Count();
+			Console.WriteLine("The string {0} i shaving {1} vowels:", input, vowelscount);
+			Console.WriteLine("\n the vowels are :");
+			foreach (var item in vowels)
+			{
+				Console.Write("\t" + item);
+			}
 
-    public class CustomerRepository
-    {
+		}
+		static void Main(string[] args)
+		{
 
-        public static List<Customer> Retrive()
-        {
-            List<Customer> custlist = new List<Customer>();
+			int[] numbers = new int[] { 12, 34, 55, 66, 77, 89, 100, 23, 41, 82, 89, 51, 39, 45 };
+			string[] names = new string[] { "Ravi", "Kiran", "Krishna", "Kumar", "Sita", "Mahesh" };
 
-            custlist.Add(new Customer { CustomerID = 101, FirstName = "suresh", LastName = "babu", City = "Hyderabad" });
-            custlist.Add(new Customer { CustomerID = 102, FirstName = "Mahesh", LastName = "naidu", City = "Mysore" });
-            custlist.Add(new Customer { CustomerID = 103, FirstName = "Kranthi", LastName = "kumari", City = "Bangalore" });
-            custlist.Add(new Customer { CustomerID = 104, FirstName = "Narendra", LastName = "Jha", City = "Delhi" });
-            custlist.Add(new Customer { CustomerID = 105, FirstName = "Vithal", LastName = "Kumar", City = "Hyderabad" });
+			//give me all the numbers which are greater than 20 in this numbers array 
 
-            return custlist;
+			// query syntax because this is written in the form of query okay 
 
-            
-        }
+			var query1 = from number in numbers where number > 20 select number;
+			// method synatx
+			var query2 = numbers.Where<int>(x => x > 20);
+			Console.WriteLine("\nnumbers greater than 20 :");
+			foreach (var item in query1)
+			{
+				Console.Write("{0,4}", item);
 
+			}
+			
 
+			// give me all the numbers which are  odd numbers 
 
-    }
-    class Program
-    {
-        static void Main(string[] args)
-        {
+			var queryodd = from number in numbers where number % 2 != 0 select number;
 
+			var queryodd1 = numbers.Where<int>(x => x % 2 != 0);
 
-            var custlist = CustomerRepository.Retrive();
-            var concatnames = from cust in custlist select cust.FirstName + " " + cust.LastName;
-            Console.WriteLine("The complete name of customers :");
-            Console.WriteLine("*************************************");
-            foreach(var element in concatnames)
-            {
-                Console.WriteLine("{0,10}", element);
+			StringBuilder sb = new StringBuilder();
+			Console.WriteLine("\n list of odd numers :\n");
+			foreach (var item in queryodd1)
+			{
+				sb.Append(item+"\t");
 
-            }
+			}
 
-            Console.WriteLine("Check customer presence enter id of customer ");
-            int id = Convert.ToInt16(Console.ReadLine());
-            
-            var checkuser = from cust in custlist
-                            where cust.custid == id
-                            select cust;
-            Customer foundcustomer = checkuser.FirstOrDefault();
-            if (foundcustomer!=null )
-            {
-                Console.WriteLine("the person with this id is there and name is {0}",
-                    foundcustomer.FirstName);
-            }
-            else
-            {
-                Console.WriteLine("the person is not available ...");
-            }
-            Console.ReadLine();
-        }
-    }
-}
+			Console.WriteLine(sb.ToString());
 
-some more code ..
+			Console.WriteLine("\n sum of elements in the array finding:");
+			var querysum = (from number in numbers select number).Sum(); // query syntax 
+			var querysum2 = numbers.Sum();// method syntax 
+			Console.WriteLine("{0}\n", querysum2);
 
+			// give me all the names in names string starting with K 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+			var startwithK = from name in names where name.StartsWith("K") select name; //query1 syntax 
+			var startwithK2 = names.Where<string>(x => x.StartsWith("K"));// method syantx 
+			Console.WriteLine("\nList of names startting with K: ");
+			foreach (var item in startwithK2)
+			{
+				Console.WriteLine("{0}", item);
+			}
+			Console.WriteLine("\n the nubers of characters in each name :");
+			var nofocharsineachname = from name in names select name;//query syntax
+			var nofocharsineachname2 = names;// method syntax;;
+			foreach (var item in nofocharsineachname2)
+			{
+				Console.WriteLine("{0,4}--{1}",item, item.Length);
+			}
 
-namespace ConsoleApplication1
-{
-    public class Customer
-    {
-        public int CustomerID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int? CustomerTypeID { get; set; }
-        public string EmailAdress { get; set; }
-    }
+			Console.WriteLine("\nList all the employee or display all the employees\n ");
 
+			var emplist = Employeerepository.Retrive();
 
-    public class CustomerRepository
-    {
-        public static List<Customer> retrive()
-        {
-            List<Customer> custlist = new List<Customer>()
-            {
-                new Customer {
-                                CustomerID =1,FirstName ="Raghavendra", LastName ="Ponde",
-                                 EmailAdress="Raghuponde@yahoo.com" ,CustomerTypeID =1},
+			var emplist1 = from emp in emplist select emp;// query syntax
+			var emplist2 = emplist;// method syntax
+			foreach(Employee emp in emplist2)
+			{
+				Console.WriteLine("{0}--{1}--{2}--{3}--{4}", 
+					emp.EmployeeID, emp.FirstName, emp.LastName, emp.City, emp.Sal);
+			}
 
-                              new Customer {CustomerID =2,FirstName ="Naresh" , LastName ="Ponde" ,
-                              EmailAdress="naresh.1107@reddiffmail.com" ,CustomerTypeID =null},
+			//showing few columns only like first name and last name 
 
-                              new Customer {CustomerID =3,FirstName ="Gowri", LastName ="rani" ,
-                              EmailAdress="gowri22@gmail.com",CustomerTypeID =1},
+			var emplistnames = from emp in emplist
+							   select new
+							   {
+								   emp.FirstName,
+								   emp.LastName
+							   }; // query syntax
 
-                              new Customer {CustomerID =4,FirstName ="gopinatha ", LastName ="rao",
-                              EmailAdress="gopi#45@yahoo.com",CustomerTypeID =2}
+			var emplistnames1 = emplist.Select(x => new { x.FirstName,x.LastName });// method syntax
 
+			Console.WriteLine("\ndisplaying ..first name and last name only ...");
+			foreach (var emp in emplistnames)
+			{
+				Console.WriteLine("{0}--{1}",
+					emp.FirstName, emp.LastName);
+			}
 
-                             };
+			Console.WriteLine("concatenate names and give it to me ..");
+			var concatnames = from emp in emplist
+							  select new
+							  {
+								 FullName= emp.FirstName + " " + emp.LastName
+							  };// query syntax
 
-            return custlist;
-        }
-
-    }
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var custlist = CustomerRepository.retrive();
-            // usage of ananomous types in two ways 
-            var query = from cust in custlist where cust.CustomerTypeID == 1 select new
-            {
-                Name = cust.FirstName + " " + cust.LastName,
-
-                Email=cust.EmailAdress
-            };
-            var query2 = custlist.Where(c => c.CustomerTypeID == 1).Select(c => new {Name=c.FirstName + " "+c.LastName,Email=c.EmailAdress });
-            foreach(var item in query)
-            {
-
-                Console.WriteLine("Full Name is {0} and Email id is {1}", item.Name, item.Email);
-            }
-            foreach (var item in query2)
-            {
-
-                Console.WriteLine("Full Name is {0} and Email id is {1}", item.Name, item.Email);
-            }
-            Console.WriteLine("enter the customer id");
-            int id = Convert.ToInt16(Console.ReadLine());
-            Customer custfound = (from cust in custlist where cust.CustomerID == id select cust).FirstOrDefault();
-            Customer custfound2 = custlist.Where(a => a.CustomerID == id).FirstOrDefault();
-            Customer custfound3 = custlist.FirstOrDefault(c => c.CustomerID == id);
-            Customer custfound4 = custlist.FirstOrDefault(c => { Console.WriteLine("hai");return c.CustomerID == id; });
-            //for multiline statements we are using it ...
-
-            Customer custfound5 = custlist.Where(a => a.CustomerTypeID == id).Skip(1).FirstOrDefault();
-            // this will print me second value as matching value with that id first i will skip and next 
-            // matching value i will put okay .
-
-            if(custfound!=null)
-            {
-                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
-                    id,custfound.FirstName,custfound.LastName);
-            }
-            else
-            {
-
-                Console.WriteLine("the person with this {0} is not there",id);
-                   
-            }
-
-            if (custfound2 != null)
-            {
-                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
-                    id, custfound2.FirstName, custfound2.LastName);
-            }
-            else
-            {
-
-                Console.WriteLine("the person with this {0} is not there", id);
-
-            }
-
-            if (custfound3 != null)
-            {
-                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
-                    id, custfound3.FirstName, custfound3.LastName);
-            }
-            else
-            {
-
-                Console.WriteLine("the person with this {0} is not there", id);
-
-            }
-
-            if (custfound4 != null)
-            {
-                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
-                    id, custfound4.FirstName, custfound4.LastName);
-            }
-            else
-            {
-
-                Console.WriteLine("the person with this {0} is not there", id);
-
-            }
-
-            if (custfound5 != null)
-            {
-                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
-                    id, custfound5.FirstName, custfound5.LastName);
-            }
-            else
-            {
-
-                Console.WriteLine("the person with this {0} is not there", id);
-
-            }
-
-            Console.WriteLine("sorting diferent ways ");
-            var sorbyname = custlist.OrderBy(c => c.FirstName);
-            //u can check it from notes different functions are there just subsitite here directly and check it 
-            Console.WriteLine("sort by firstname");
-            Console.WriteLine("******************");
-            foreach(var item in sorbyname)
-            {
-                Console.WriteLine(item.FirstName);
-            }
-            Console.ReadLine();
+			var concatnames2 = emplist.Select(x => new {FullName=x.FirstName + " " +x.LastName });//method syntax
 
 
-        }
-    }
+			foreach (var item in concatnames2)
+			{
+				Console.WriteLine("{0}",item.FullName);
+			}
+			// give me all employees whoes salary is greater than avg salary of all employyes
+
+		
+			var avgsalary = emplist.Average<Employee>(x => x.Sal);// method syentax 
+
+		
+			var avgsalry1 = from emp in emplist
+							 where (emp.Sal > avgsalary) select emp;// query syntax;
+
+
+			Console.WriteLine("\n The average slary of employee is {0}", avgsalary);
+
+			var greaterthanvg = emplist.Where<Employee>(x => x.Sal > avgsalary);
+
+			foreach (var item in greaterthanvg)
+			{
+				Console.WriteLine("{0}--{1}", item.FirstName, item.Sal);
+
+			}
+
+			// finind the empname if empid is given this we have done in collection but using linq i want to do it 
+			Console.WriteLine("\nenter the  id of the employee for which u want to find the name");
+			int id = Convert.ToInt16(Console.ReadLine());
+			var checkemp = from emp in emplist where emp.EmployeeID == id select emp;
+
+			Employee empfound = checkemp.FirstOrDefault();
+			if(empfound!=null)
+			{
+
+				Console.WriteLine("\nThe emp with {0} is having name {1}", empfound.EmployeeID, empfound.FirstName);
+			}
+			else
+			{
+				Console.WriteLine("\nemployee not avaiable ");
+			}
+
+			// funciton subprogram to find count of vowels in a given string using linq  ;
+			Console.WriteLine("\n enter string to find no of vowels in it and count also ..");
+			string input = Console.ReadLine();
+			findvowelcout(input);
+
+			Console.WriteLine("creating groups for odd and even numbers in the array ....");
+			var groups=from number in numbers   group number by number%2!=0 
+					   into groupnumbers
+					   select new
+					   {
+						  isodd= groupnumbers.Key,
+						   groupnumbers
+
+			           };
+
+			foreach (var group in groups)
+			{
+				Console.WriteLine(group.isodd);
+				foreach(var item in group.groupnumbers)
+				{
+					Console.WriteLine(item);
+				}
+				Console.WriteLine();
+
+			}
+
+			Console.WriteLine();
+			Console.WriteLine();
+
+			List<DepartmentClass> departments = new List<DepartmentClass>();
+			departments.Add(new DepartmentClass
+			{
+				DepartmentId = 1,
+				Name ="Account"
+			});
+			departments.Add(new DepartmentClass
+			{
+				DepartmentId = 2,
+				Name = "Sales"
+			});
+			departments.Add(new DepartmentClass
+			{
+				DepartmentId = 3,
+				Name ="Marketing"
+			});
+			List<EmployeeClass> employees = new List<EmployeeClass>();
+			employees.Add(new EmployeeClass
+			{
+				DepartmentId = 1,
+				EmployeeId = 1,
+				EmployeeName = "William"
+			});
+			employees.Add(new EmployeeClass
+			{
+				DepartmentId = 2,
+				EmployeeId = 2,
+				EmployeeName = "Miley"
+			});
+			employees.Add(new EmployeeClass
+			{
+				DepartmentId = 1,
+				EmployeeId = 3,
+				EmployeeName = "Benjamin"
+			});
+
+			Console.WriteLine("\njoining above two tables based on common columns...");
+
+			var list = (from e in employees
+						join d in departments on e.DepartmentId equals d.DepartmentId
+						select new
+						{
+							EmployeeName = e.EmployeeName,
+							DepartmentName = d.Name
+						});
+
+			foreach (var e in list)
+			{
+				Console.WriteLine("Employee Name = {0} , Department Name = {1}",
+				e.EmployeeName, e.DepartmentName);
+			}
+			Console.ReadLine();
+		}
+	}
 }
 
 constructor demos 
