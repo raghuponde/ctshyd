@@ -416,7 +416,29 @@ namespace Enumdemo1
  }
 
 
+change values and see the output 
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Enumdemo
+{
+    internal class Program
+    {
+        enum weekdays { sun=200,mon,tue=10,wed,thu,fri,sat};
+        static void Main(string[] args)
+        {
+            Console.WriteLine($"{(int)weekdays.wed}");
+            Console.ReadLine();
+        }
+    }
+}
+
+Another program on Enum 
+---------------------------
 using System;
 using System.Collections.Generic;
 using System.Linq;
