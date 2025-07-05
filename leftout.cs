@@ -337,41 +337,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Constructorinhiertance
+namespace constructordemo
 {
     class Vehicle
     {
-        public string Make { set; get; }
+        public string Make { set;get; }
         public string Model { set; get; }
 
-        public Vehicle(string make,string model)
+        public Vehicle()
         {
-            Make = make;    
-            Model = model;  
-            Console.WriteLine($"Vehicle constructor :{Make}--{Model}");
-                
+            Console.WriteLine("\n Default Constructor");
         }
-    }
-    class Car :Vehicle 
-    { 
+        public Vehicle(string make1,string model1)
+        {
+            this.Make = make1;
+            this.Model = model1;
+            Console.WriteLine($"paramatized constructor :{this.Make}--{this.Model}");
 
+        }
+
+        public Vehicle(Vehicle v)
+        {
+            this.Make = v.Make;
+            this.Model= v.Model;
+            Console.WriteLine($"Copy Constructor :{this.Make}--{this.Model}");
+        }
+
+    }
+    class car:Vehicle
+    {
         public int NumberofDoors { set; get; }
-
-        public Car(string make, string model,int noofdoors):base(make,model)
+        public car(string make1, string model1, int noofdoors1) : base(make1, model1)
         {
-            NumberofDoors = noofdoors;
-
-            Console.WriteLine($"car constructor :{Make}--{Model}--{NumberofDoors}");
+            NumberofDoors = noofdoors1;
+            Console.WriteLine($"Car constructor:{Make}--{Model}--{NumberofDoors} ");
         }
 
-
-
     }
-     class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
-            Car cc = new Car("Toyota", "camry", 4);
+            Vehicle cc1 = new Vehicle();//for default constructor  
+            Vehicle cc2 = new Vehicle("Suzuki", "grandvitara");
+            Vehicle cc3 = new Vehicle("renault", "mini");//paramatixed 
+            Vehicle cc4 = new Vehicle(cc3);//copy construcotr
+            car cc = new car("Toyato", "canry", 4);//child usage 
             Console.ReadLine();
         }
     }
