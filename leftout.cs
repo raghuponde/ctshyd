@@ -545,7 +545,7 @@ namespace structstudentdemo
             double average = CalculateAvergageMark();
             if(average> 80)
             {
-                return 'A';
+                return 'A'; 
             }
 
             else if(average > 70 )
