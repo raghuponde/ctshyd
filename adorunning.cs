@@ -369,7 +369,57 @@ begin
 delete from course where courseid=@cid1;
 end
   
+To configure an ADO.NET SQL Server connection in the App.config file of a Windows Forms or Console Application, follow these steps:
 
+✅ Step 1: Add Connection String in App.config
+
+Create or open your App.config file and add the following <connectionStrings> section inside the <configuration> root element:
+
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <connectionStrings>
+    <add name="MyDbConnection"
+         connectionString="Data Source=YOUR_SERVER_NAME;Initial Catalog=YOUR_DATABASE_NAME;Integrated Security=True"
+         providerName="System.Data.SqlClient" />
+  </connectionStrings>
+</configuration>
+
+
+✅ Step 2: Read the Connection String in C# Code
+Now access the connection string in your C# code using ConfigurationManager.
+
+🔷 Add reference to System.Configuration.dll if not already added.
+
+Using statement:
+
+
+using System.Configuration;
+using System.Data.SqlClient;
+
+string connectionString = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
+
+using (SqlConnection conn = new SqlConnection(connectionString))
+{
+    conn.Open();
+    // Execute commands here
+    Console.WriteLine("Connection successful!");
+}
+
+✅ Step 3: Ensure the System.Configuration Assembly is Added
+If you're using .NET Framework:
+
+Right-click on your project → Add Reference → Assemblies → Add System.Configuration.
+
+🔍 Example App.config (Complete)
+
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <connectionStrings>
+    <add name="MyDbConnection"
+         connectionString="Data Source=localhost;Initial Catalog=TestDB;Integrated Security=True"
+         providerName="System.Data.SqlClient" />
+  </connectionStrings>
+</configuration>
 
 There are some drawabacks in connected architecture 
 -----------------------------------------------------
