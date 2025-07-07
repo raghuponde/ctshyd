@@ -461,3 +461,7 @@ namespace GadgetHub
     }
 }
 
+Next Come to project and go to tekstac from there go to UML and ask them to go through the video and have  u done if not done sit and do it 
+
+I want class diagrams ,use case diagrams and user Storeis for the project 
+
