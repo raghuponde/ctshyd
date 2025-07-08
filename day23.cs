@@ -1564,7 +1564,23 @@ class Program
     }
 }
 
+prompt for project extraction 
+
+for the above project i want use case diagrams involving all modules of the project ,I want class diagrams and its responsiblities means all operations on that class ,I want user Stories for the all the modules and finally i want the Database design  diagram for the database given in the project 
+
+so i want complete full nice  diagrams also for each concept okay along with theory points 
+means I want use case diagram seperate ,class diagram seperate and user stories seperate and database design 
+seperate images 
 
 
+prompt for interview 
+
+I have an upcoming interview on for dotnet ,sql server ,html ,css and js topics can you help me in preparing for interview ? do not provide answer immediately.
+i will prompt "next" for new question and "answer" for answer. I will give the "Topic" also along with prompt "next" and if topic 
+   not given means you have to give questions on same topic if topic is changed then give questions for new topic .
+    keep the difficult level as medium and hard for now. are you ready?
+
+
+Now club the Theory points means documentation of the project with the images under each docuemnt  means after topic of  theory i should see the image related to topics and create the pdf and give it to me   
 
 
