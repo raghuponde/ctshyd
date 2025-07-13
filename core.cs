@@ -108,6 +108,69 @@ namespace WindowsFormsApp7
     }
 }
 
+Now go to collectionofobjects.cs view and add there two links like this one is achcor link  and another is tag helper link as per latest trend okay 
+
+
+@model IEnumerable<mvcwebapp1.Models.Employee>
+@{
+    ViewData["Title"] = "collectionofobjectpassing";
+}
+
+<h1>collectionofobjectpassing</h1>
+
+<style>
+	table {
+		border-collapse: collapse;
+		width: 50%;
+	}
+
+	table, th, td {
+		border: 2px solid black;
+	}
+
+	th, td {
+		padding: 8px;
+		text-align: left;
+	}
+</style>
+
+<table>
+	<thead>
+		<tr>
+			<th>EmployeeID</th>
+			<th>EmpName</th>
+			<th>Salary</th>
+			<th> Image </th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var emp in Model)
+		{
+			<tr>
+
+				<td> @emp.EmployeeID</td>
+				<td>@emp.EmpName</td>
+				<td>@emp.Salary</td>
+				<td>
+
+
+					<img src="@emp.ImageUrl"
+						 alt="@emp.EmpName"
+						 width="100" height="100" />
+
+				</td>
+				<td>
+					<a href="/Home/Details/@emp.EmployeeID">Details </a> |
+					<a asp-controller="Home" asp-action="Details" asp-route-id="@emp.EmployeeID">Details </a>
+				</td>
+
+			</tr>
+		}
+
+	</tbody>
+</table>
+
+I am telling here that in home controller there is details method so let us add taht method now 
 
 
 CRUD operation using a Model :
