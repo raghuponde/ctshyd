@@ -11,8 +11,7 @@ but now i will ask the visual studio to genrate the code for me in the view that
 so check program dog on this example ..
 
 Get and Post methods are there for only insert ,update and delete functionalities
-
-
+ 
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
