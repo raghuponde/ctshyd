@@ -1516,4 +1516,616 @@ Let me know if you want:
 
 Would you like a Razor Pages version next?
 
+-------------------start here ---------------------
+Now i want to add some more classes into the same program but with annotations which will provide valdiation to me according constraints will be imposed on the table from 
+ the classe and I also want to impose fleunt api to provide realtionship .
+ 
+ so some classes i will be adding and again same commands i will be using 
+ 
+ so now add classes Author1 ,Course1 ,Employee ,UserDetail into the models folder 
+ 
+ 
+ namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class Author1
+    {
+
+        public int Id { set; get; }
+        public string Name { set; get; }
+        public IList<Course1> Courses { set; get; }
+    }
+}
+
+
+
+ using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class Course1
+    {
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { set; get; }// not an identity column 
+
+        [Required]
+        [Column("Stitle", TypeName = "varchar")]
+        public string Title { set; get; }
+
+        [Required]
+        [MaxLength(220)]
+        public string Description { set; get; }
+
+
+        public float fullprice { set; get; }
+
+
+        [ForeignKey("Author")]
+        public int AuthorId { set; get; }
+
+        public Author1 Author { set; get; }
+
+    }
+}
+
+ 
+ using System.ComponentModel.DataAnnotations;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class Employee
+    {
+         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Please enter your firstname")]
+        public string? FirstName { set; get; }
+
+        [Required(ErrorMessage = "Please enter your lastname")]
+        public string? LastName { set; get; }
+
+        [Required(ErrorMessage = "Please enter email id")]
+        [EmailAddress(ErrorMessage = "Please enter valid email id")]
+        public string? Email { set; get; }
+
+        [Required(ErrorMessage = "Please enter your age")]
+        [Range(0, 100, ErrorMessage = "Please enter your age betwen 1 to 100 only ")]
+        
+        public int Age { set; get; }
+    }
+}
+
+
+
+ 
+ 
+ using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class UserDetail
+    {
+         public int Id { get; set; } 
+    
+        [Required(ErrorMessage = "User Name is Required")]
+        [StringLength(15, ErrorMessage = "User Name cannot be more than 15 characters")]
+        public string? UserName { get; set; }
+
+        [Required(ErrorMessage = "Password Required")]
+        [StringLength(11, MinimumLength = 5, ErrorMessage = "Minimum Length of Password is 5 letters or Max Length is of 11 letters..")]
+        [DataType("password")]
+        public string? NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm new password")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string? ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "Date Of Birth is Required")]
+        [DisplayName("Date of Birth")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        [Required(ErrorMessage = "Email is Required")]
+        [EmailAddress(ErrorMessage = "Please enter valid Email Id")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Postal Code is Required")]
+        [Range(100, 1000, ErrorMessage = "Must be between 100 and 1000")]
+        public int PostalCode { get; set; }
+
+        [Required(ErrorMessage = "Phone Number is Required")]
+        [DisplayName("Phone Number")]
+        public int PhoneNo { get; set; }
+
+        [Required(ErrorMessage = "Profile is Required")]
+        [DataType(DataType.MultilineText)]
+        public string Profile { get; set; }
+
+    }
+}
+
+ 
+updte in eventcontext 
+
+-------------------------
+using Microsoft.EntityFrameworkCore;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class EventContext:DbContext
+    {
+
+        public EventContext()
+        {
+                
+        }
+
+        public EventContext(DbContextOptions dbContextOptions):base(dbContextOptions)
+        {
+            
+        }
+
+        public DbSet<Author> authors { get; set; }
+
+        public DbSet<Course> courses { get; set; }
+
+        public DbSet<Student> students { get; set; }
+
+        public DbSet<UserDetail> userdetails { get; set; }
+
+        public DbSet<Employee> employees { get; set; }
+
+        public DbSet<Author1> authors1 { get; set; }
+
+        public DbSet<Course1> courses1 { get; set; }    
+    }
+}
+
+ Now i want to use fluent api and do the work which was done by data annotations and also i need to seed the data into some table by default
+ by usinng fluent api so let us add some tables and provide relationship and include annotaions using fluent api 
+ 
+ 
+ 
+ Now add 3 classes liek this Author2 ,Course2 and UserDetail2 and in that add previous proepties only but remove all annotoations from top of proeprties 
+ 
+ namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class Author2
+    {
+
+        public int Id { set; get; }
+        public string Name { set; get; }
+        public IList<Course2> Courses { set; get; }
+    }
+}
+
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class Course2
+    {
+
+        public int Id { set; get; }// not an identity column 
+
+        
+        public string Title { set; get; }
+
+       
+        public string Description { set; get; }
+
+
+        public float fullprice { set; get; }
+
+
+        public int Author2Id { set; get; }
+
+        public Author2 Author { set; get; }
+    }
+}
+
+
+ using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class UserDetail2
+    {
+
+        public int Id { get; set; }
+
+        public string? UserName { get; set; }
+
+        public string? NewPassword { get; set; }
+
+        
+        public string? ConfirmPassword { get; set; }
+
+        
+        public DateTime DateOfBirth { get; set; }
+
+        
+        public string? Email { get; set; }
+
+        
+        public int PostalCode { get; set; }
+
+        
+        public int PhoneNo { get; set; }
+
+        
+        public string Profile { get; set; }
+
+
+    }
+}
+
+ using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CodeFirstEntityFrameworkDemo.Models
+{
+    public class EventContext:DbContext
+    {
+
+        public EventContext()
+        {
+                
+        }
+
+        public EventContext(DbContextOptions dbContextOptions):base(dbContextOptions)
+        {
+            
+        }
+
+        public DbSet<Author> authors { get; set; }
+
+        public DbSet<Course> courses { get; set; }
+
+        public DbSet<Student> students { get; set; }
+
+        public DbSet<UserDetail> userdetails { get; set; }
+
+        public DbSet<Employee> employees { get; set; }
+
+        public DbSet<Author1> authors1 { get; set; }
+
+        public DbSet<Course1> courses1 { get; set; }  
+        
+        public DbSet<Course2> courses2 { get; set; }
+
+        public DbSet<Author2 > authors2 { get; set; }   
+
+        public DbSet<UserDetail2> userdetails2 { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+           
+
+            // Fluent API for Author2
+            modelBuilder.Entity<Author2>(entity =>
+            {
+
+               
+
+                entity.HasKey(a => a.Id); // Primary Key
+                entity.Property(a => a.Name).IsRequired().HasMaxLength(100);
+
+                // Relationship with Course2
+                entity.HasMany(a => a.Courses)
+                      .WithOne(c =>c.Author)
+                      .HasForeignKey(c => c.Author2Id)
+                      .OnDelete(DeleteBehavior.Cascade); // Cascade delete
+            });
+
+            // Fluent API for Course2
+            modelBuilder.Entity<Course2>(entity =>
+            {
+                entity.HasKey(c => c.Id); // Primary Key
+
+                entity.Property(c => c.Id)
+                      .ValueGeneratedNever(); // Not an identity column
+
+                entity.Property(c => c.Title)
+                      .IsRequired()
+                      .HasMaxLength(255)
+                      .HasColumnName("Stitle")
+                      .HasColumnType("varchar");
+
+                entity.Property(c => c.Description)
+                      .IsRequired()
+                      .HasMaxLength(220);
+
+                entity.Property(c => c.fullprice)
+                      .HasColumnType("float")
+                      .IsRequired();
+
+                // Foreign Key to Author1
+                entity.HasOne(c => c.Author)
+                      .WithMany(a => a.Courses)
+                      .HasForeignKey(c => c.Author2Id);
+            });
+
+
+            // Fluent API for UserDetail
+            modelBuilder.Entity<UserDetail2>(entity =>
+            {
+                entity.HasKey(u => u.Id); // Primary Key
+
+                entity.Property(u => u.UserName)
+                      .IsRequired()
+                      .HasMaxLength(15);
+
+                entity.Property(u => u.NewPassword)
+                      .IsRequired()
+                      .HasMaxLength(11);
+
+                entity.Property(u => u.DateOfBirth)
+                      .IsRequired()
+                      .HasColumnType("date");
+
+                entity.Property(u => u.Email)
+                      .IsRequired()
+                      .HasMaxLength(100)
+                      .HasColumnType("varchar");
+
+                entity.Property(u => u.PostalCode)
+                      .IsRequired()
+                      .HasColumnType("int");
+
+                entity.Property(u => u.PhoneNo)
+                      .IsRequired();
+
+                entity.Property(u => u.Profile)
+                      .IsRequired()
+                      .HasColumnType("nvarchar(max)");
+            });
+
+            // Seed data for Author1 and Course1
+            modelBuilder.Entity<Author2>().HasData(
+                new Author2 { Id = 1, Name = "Author One" },
+                new Author2 { Id = 2, Name = "Author Two" }
+            );
+
+            modelBuilder.Entity<Course2>().HasData(
+                new Course2 { Id = 1, Title = "Course A", Description = "Description A", fullprice = 100, Author2Id = 1 },
+                new Course2 { Id = 2, Title = "Course B", Description = "Description B", fullprice = 200, Author2Id = 2 }
+            );
+        }
+    }
+}
+
+
+ 
+CRUD using code first and also will use repository pattern 
+--------------------------------------------------------------
+here one interface we define methods and and one class will implment that interface and that class will be used by a contoller which is nothing but repsoitory pattern 
+
+
+Add one class Post like this on Models folder 
+
+public class Post
+{
+
+	public int Id { set; get; }
+	public DateTime DatePublished { set; get; }
+	public string Title { set; get; }
+	public string Body { set; get; }
+}
+
+add in EventContext the the DBSet 
+
+public DbSet<Post> posts { get; set; }
+
+build the solution 
+
+add migrations 
+
+see the table in db it will be there 
+
+create one folder Repositories 
+
+in that add one inetface IPost and and one class PostRepository
+
+
+using CodeFirstEntityFrameworkDemo.Models;
+
+namespace CodeFirstEntityFrameworkDemo.Repositories
+{
+    public interface IPost
+    {
+
+        List<Post> GetPosts();
+
+        Post GetPostByID(int postid);
+
+        void InsertPost(Post post);
+
+        void DeletePost(int postid);
+
+        void UpdatePost(Post post);
+
+        void save();
+    }
+}
+
+
+
+using CodeFirstEntityFrameworkDemo.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CodeFirstEntityFrameworkDemo.Repositories
+{
+    public class PostRepository : IPost
+    {
+        private EventContext context;
+
+        public PostRepository(EventContext cnt)
+        {
+            this.context = cnt;
+        }
+        public void DeletePost(int postid)
+        {
+            Post post = context.posts.Find(postid);
+            context.posts.Remove(post);
+        }
+        public Post GetPostByID(int postid)
+        {
+            return context.posts.Find(postid);
+
+        }
+        public List<Post> GetPosts()
+        {
+            return context.posts.ToList();
+        }
+
+        public void InsertPost(Post post)
+        {
+            context.posts.Add(post);
+        }
+
+        public void save()
+        {
+            context.SaveChanges();
+        }
+
+        public void UpdatePost(Post post)
+        {
+            context.Entry(post).State = EntityState.Modified;
+
+
+        }
+    }
+}
+
+register this in Program.cs file 
+----------------------------------
+after the EventContext of buider u add this below line 
+
+builder.Services.AddScoped<IPost,PostRepository>();  
+
+
+Post Contoller 
+-------------
+using CodeFirstEntityFrameworkDemo.Models;
+using CodeFirstEntityFrameworkDemo.Repositories;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CodeFirstEntityFrameworkDemo.Controllers
+{
+    public class PostController : Controller
+    {
+        private readonly IPost _postRepository;
+
+        public PostController(IPost postRepository)
+        {
+            _postRepository = postRepository;
+        }
+
+        // GET: Post
+        public IActionResult Index()
+        {
+            var posts = _postRepository.GetPosts();
+            return View(posts);
+        }
+
+        // GET: Post/Details/5
+        public IActionResult Details(int id)
+        {
+            var post = _postRepository.GetPostByID(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            return View(post);
+        }
+
+        // GET: Post/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Post/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Post post)
+        {
+            if (ModelState.IsValid)
+            {
+                _postRepository.InsertPost(post);
+                _postRepository.save();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(post);
+        }
+
+        // GET: Post/Edit/5
+        public IActionResult Edit(int id)
+        {
+            var post = _postRepository.GetPostByID(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            return View(post);
+        }
+
+        // POST: Post/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Post post)
+        {
+            if (id != post.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _postRepository.UpdatePost(post);
+                    _postRepository.save();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(post);
+        }
+
+        // GET: Post/Delete/5
+        public IActionResult Delete(int id)
+        {
+            var post = _postRepository.GetPostByID(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            return View(post);
+        }
+
+        // POST: Post/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            _postRepository.DeletePost(id);
+            _postRepository.save();
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}
+
 
