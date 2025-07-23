@@ -2128,4 +2128,148 @@ namespace CodeFirstEntityFrameworkDemo.Controllers
     }
 }
 
+new code
+------------
+
+using System.ComponentModel.DataAnnotations;
+
+namespace CodeFirstEFDEmo.Models
+{
+    public class Customer
+    {
+        public int CustomerID { get; set; }
+
+        [Required]
+        public string CustomerName { get; set; }
+
+        public ICollection<Product> Products { get; set; }
+    }
+}
+
+
+
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CodeFirstEFDEmo.Models
+{
+    public class Product
+    {
+        public int ProductID { get; set; }
+
+        [Required]
+        public string ProductName { get; set; }
+
+        [Display(Name = "Who Buyed")]
+        public int CustomerID { get; set; }
+
+        [ForeignKey("CustomerID")]
+        public Customer Customer { get; set; } 
+    }
+}
+
+
+
+public DbSet<Customer> Customers { get; set; }
+public DbSet<Product> Products { get; set; }
+
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using CodeFirstEFDEmo.Models;
+
+namespace CodeFirstEFDEmo.Controllers
+{
+    public class TransactionController : Controller
+    {
+        private readonly EventContext _context;
+
+        public TransactionController(EventContext context)
+        {
+            _context = context;
+        }
+
+        // ----------------- CUSTOMER CREATE -----------------
+
+        [HttpGet]
+        public IActionResult CreateCustomer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateCustomer(Customer customer)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+                return RedirectToAction("CreateProduct");
+            }
+            return View(customer);
+        }
+
+        // ----------------- PRODUCT CREATE -----------------
+
+        [HttpGet]
+        public IActionResult CreateProduct()
+        {
+            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerID", "CustomerName");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateProduct(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                return RedirectToAction("CreateProduct");
+            }
+
+            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerID", "CustomerName", product.CustomerID);
+            return View(product);
+        }
+    }
+}
+
+
+@model CodeFirstEFDEmo.Models.Customer
+
+<h2>Create Customer</h2>
+
+<form asp-action="CreateCustomer" method="post">
+    <div>
+        <label asp-for="CustomerName"></label>
+        <input asp-for="CustomerName" />
+        <span asp-validation-for="CustomerName"></span>
+    </div>
+    <button type="submit">Save</button>
+</form>
+
+
+
+@model CodeFirstEFDEmo.Models.Product
+
+<h2>Create Product</h2>
+
+<form asp-action="CreateProduct" method="post">
+    <div>
+        <label asp-for="ProductName"></label>
+        <input asp-for="ProductName" />
+        <span asp-validation-for="ProductName"></span>
+    </div>
+
+    <div>
+        <label asp-for="CustomerID">Who Buyed</label>
+        <select asp-for="CustomerID" asp-items="ViewBag.CustomerList">
+            <option value="">-- Select Customer --</option>
+        </select>
+        <span asp-validation-for="CustomerID"></span>
+    </div>
+
+    <button type="submit">Save</button>
+</form>
 
