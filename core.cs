@@ -2130,7 +2130,8 @@ namespace CodeFirstEntityFrameworkDemo.Controllers
 
 new code
 ------------
-
+In Models Folder 
+---------------
 using System.ComponentModel.DataAnnotations;
 
 namespace CodeFirstEFDEmo.Models
@@ -2167,11 +2168,14 @@ namespace CodeFirstEFDEmo.Models
     }
 }
 
+code added in EventContext class now like this 
 
-
+-------------------------------------------------
 public DbSet<Customer> Customers { get; set; }
 public DbSet<Product> Products { get; set; }
 
+Then gone in TransactionController 
+-------------------------------------
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -2190,51 +2194,64 @@ namespace CodeFirstEFDEmo.Controllers
 
         // ----------------- CUSTOMER CREATE -----------------
 
-        [HttpGet]
-        public IActionResult CreateCustomer()
-        {
-            return View();
-        }
+       [HttpGet]
+ public IActionResult CreateCustomer()
+ {
+     return View();
+ }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateCustomer(Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Customers.Add(customer);
-                _context.SaveChanges();
-                return RedirectToAction("CreateProduct");
-            }
-            return View(customer);
-        }
+ [HttpPost]
+ [ValidateAntiForgeryToken]
 
-        // ----------------- PRODUCT CREATE -----------------
+ public IActionResult CreateCustomer(Customer customer)
+ {
+     // Example condition: remove CustomerName if it's just whitespace
+         ModelState.Clear();
+         ModelState.Remove(nameof(customer.CustomerID));
+         // optionally assign a default value
+         // customer.CustomerName = "Guest";
+      
 
-        [HttpGet]
-        public IActionResult CreateProduct()
-        {
-            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerID", "CustomerName");
-            return View();
-        }
+     if (ModelState.IsValid)
+     {
+         _context.Customers.Add(customer);
+         _context.SaveChanges();
+         return RedirectToAction("CreateProduct");
+     }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateProduct(Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Products.Add(product);
-                _context.SaveChanges();
-                return RedirectToAction("CreateProduct");
-            }
+     return View(customer);
+ }
 
-            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerID", "CustomerName", product.CustomerID);
-            return View(product);
-        }
+
+ [HttpGet]
+ public IActionResult CreateProduct()
+ {
+     ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerID", "CustomerName");
+     return View();
+ }
+
+ [HttpPost]
+ [ValidateAntiForgeryToken]
+ public IActionResult CreateProduct(Product product)
+ {
+     ModelState.Clear();
+     ModelState.Remove(nameof(product.ProductID));
+     if (ModelState.IsValid)
+     {
+         _context.Products.Add(product);
+         _context.SaveChanges();
+         return RedirectToAction("CreateProduct");
+     }
+
+     ViewBag.CustomerList = 
+         new SelectList(_context.Customers, "CustomerID", "CustomerName", product.CustomerID);
+     return View(product);
+ }
     }
 }
 
+Views created like this 
+------------------------
 
 @model CodeFirstEFDEmo.Models.Customer
 
@@ -2273,3 +2290,4 @@ namespace CodeFirstEFDEmo.Controllers
     <button type="submit">Save</button>
 </form>
 
+For the above coding the value is not getting inserted in the table Customers in database what can be errror 
