@@ -702,3 +702,73 @@ PUT /api/patient/{id}
 DELETE /api/patient/{id}
 
 
+
+                         +------------------+
+                         |     User         |
+                         +------------------+
+                         | UserId (PK)      |
+                         | Username         |
+                         | Password         |
+                         | Role             |
+                         +------------------+
+
+                                  
+
+                         +------------------+
+                         |    Patient       |
+                         +------------------+
+                         | PatientId (PK)   |
+                         | Name             |
+                         | DateOfBirth      |
+                         | Gender           |
+                         | ContactNumber    |
+                         | Address          |
+                         | MedicalHistory   |
+                         +------------------+
+                                 |
+                                 | 1
+                                 |
+                                 | <---------------------------+
+                                 |                             |
+                                 v                             |
++------------------+      +------------------+         +------------------+
+|   Appointment    |      |      Bill        |         |     Doctor       |
++------------------+      +------------------+         +------------------+
+| AppointmentId(PK)|      | BillId (PK)      |         | DoctorId (PK)    |
+| PatientId (FK)   |----->| PatientId (FK)   |         | Name             |
+| DoctorId (FK)    |      | TotalAmount      |         | Specialization   |
+| AppointmentDate  |      | PaymentStatus    |         | ContactNumber    |
+| TimeSlot         |      | BillDate         |         | Availability     |
+| Status           |      +------------------+         +------------------+
++------------------+
+                                 ^
+                                 |
+                                 | M
+                                 |
+                         +------------------+
+                         |   Doctor         |
+                         +------------------+
+Relationship Summary (in plain text for understanding):
+Patient:
+
+Has many Appointments
+
+Has many Bills
+
+Doctor:
+
+Has many Appointments
+
+Appointment:
+
+Belongs to one Patient
+
+Belongs to one Doctor
+
+Bill:
+
+Belongs to one Patient
+
+User:
+
+Not directly related in this diagram, but stores authentication info with roles like ADMIN, DOCTOR, PATIENT.
