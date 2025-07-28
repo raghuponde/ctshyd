@@ -402,10 +402,9 @@ Purpose: Manages product listings, categories, and inventory.
 for this i want web api controller code and also need service also which will be used in controller of web api
   I want it in the form of interface where All methods will go and service class should implement that
   interface  and in ProductController i shoudl use it
+
 ✅ 1. IProductService.cs (Interface)
-csharp
-Copy
-Edit
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -418,9 +417,7 @@ public interface IProductService
     Task<bool> DeleteProductAsync(int productId);
 }
 ✅ 2. ProductService.cs (Service Implementation)
-csharp
-Copy
-Edit
+
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -479,9 +476,7 @@ public class ProductService : IProductService
     }
 }
 ✅ 3. ProductController.cs (Web API Controller)
-csharp
-Copy
-Edit
+
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
