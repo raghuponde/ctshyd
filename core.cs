@@ -382,5 +382,919 @@ namespace CodeFirstEFDEmo.Controllers
     }
 }
 
+Here i had written the code in web api controller i want it to put it in interface IEmployee and I want to implement EmployeeService and then i want to use it in web api controller where i will call a web api controller with read and write actions so provide me the three codes one is IEmployee and then EmployeeService implementing interface and finally give create a new EmployeeController of web api with read and write actions subsitting Employee service
+
+
+✅ 1. IEmployee.cs (Interface)
+
+using CodeFirstEFDEmo.Models;
+
+namespace CodeFirstEFDEmo.Services
+{
+    public interface IEmployee
+    {
+        Task<List<Employee>> GetAllEmployeesAsync();
+        Task<Employee?> GetEmployeeByIdAsync(int id);
+        Task<Employee> AddEmployeeAsync(Employee employee);
+        Task<Employee?> UpdateEmployeeAsync(Employee employee);
+        Task<Employee?> DeleteEmployeeAsync(int id);
+    }
+}
+✅ 2. EmployeeService.cs (Service Implementation)
+
+using CodeFirstEFDEmo.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CodeFirstEFDEmo.Services
+{
+    public class EmployeeService : IEmployee
+    {
+        private readonly EventContext _context;
+
+        public EmployeeService(EventContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Employee>> GetAllEmployeesAsync()
+        {
+            return await _context.employees.ToListAsync();
+        }
+
+        public async Task<Employee?> GetEmployeeByIdAsync(int id)
+        {
+            return await _context.employees.FindAsync(id);
+        }
+
+        public async Task<Employee> AddEmployeeAsync(Employee employee)
+        {
+            _context.employees.Add(employee);
+            await _context.SaveChangesAsync();
+            return employee;
+        }
+
+        public async Task<Employee?> UpdateEmployeeAsync(Employee emp)
+        {
+            var existing = await _context.employees.FindAsync(emp.Id);
+            if (existing == null) return null;
+
+            existing.FirstName = emp.FirstName;
+            existing.LastName = emp.LastName;
+            existing.Email = emp.Email;
+            existing.Age = emp.Age;
+
+            await _context.SaveChangesAsync();
+            return existing;
+        }
+
+        public async Task<Employee?> DeleteEmployeeAsync(int id)
+        {
+            var employee = await _context.employees.FindAsync(id);
+            if (employee == null) return null;
+
+            _context.employees.Remove(employee);
+            await _context.SaveChangesAsync();
+            return employee;
+        }
+    }
+}
+✅ 3. EmployeeController.cs (Web API Controller using the service)
+
+using CodeFirstEFDEmo.Models;
+using CodeFirstEFDEmo.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CodeFirstEFDEmo.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployee _employeeService;
+
+        public EmployeeController(IEmployee employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Employee>>> GetAll()
+        {
+            return Ok(await _employeeService.GetAllEmployeesAsync());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Employee>> GetById(int id)
+        {
+            var employee = await _employeeService.GetEmployeeByIdAsync(id);
+            if (employee == null)
+                return NotFound("Employee not found");
+            return Ok(employee);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Employee>> Create(Employee employee)
+        {
+            var added = await _employeeService.AddEmployeeAsync(employee);
+            return Ok(added);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Employee>> Update(Employee employee)
+        {
+            var updated = await _employeeService.UpdateEmployeeAsync(employee);
+            if (updated == null)
+                return NotFound("Employee not found");
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Employee>> Delete(int id)
+        {
+            var deleted = await _employeeService.DeleteEmployeeAsync(id);
+            if (deleted == null)
+                return NotFound("Employee not found");
+            return Ok(deleted);
+        }
+    }
+}
+✅ 4. Register Service in Startup.cs or Program.cs
+If using ASP.NET Core 6 or later (Program.cs):
+
+
+builder.Services.AddScoped<IEmployee, EmployeeService>();
+
+
+so for the above program the model is like this so i need Image Upload of employee and pagination code and validation code as well to be added give me complete code for it 
+
+To fully implement image upload, pagination, and validation in your ASP.NET Core Web API for the Employee model, I’ll provide a complete working example divided into:
+
+✅ Updated Employee Model with ImagePath
+
+✅ Interface IEmployee
+
+✅ Service EmployeeService with pagination and image upload
+
+✅ Controller EmployeeController with model validation and pagination
+
+✅ Configure File Upload Folder
+
+✅ Dependency Injection in Program.cs
+
+
+✅ 1. Employee.cs Model (Add ImagePath)
+
+using System.ComponentModel.DataAnnotations;
+
+namespace CodeFirstEFDEmo.Models
+{
+    public class Employee
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Please enter your firstname")]
+        public string? FirstName { get; set; }
+
+        [Required(ErrorMessage = "Please enter your lastname")]
+        public string? LastName { get; set; }
+
+        [Required(ErrorMessage = "Please enter email id")]
+        [EmailAddress(ErrorMessage = "Please enter valid email id")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Please enter your age")]
+        [Range(0, 100, ErrorMessage = "Age should be between 1 to 100")]
+        public int Age { get; set; }
+
+        public string? ImagePath { get; set; }
+    }
+}
+
+✅ 2. Interface: IEmployee.cs
+
+using CodeFirstEFDEmo.Models;
+
+namespace CodeFirstEFDEmo.Services
+{
+    public interface IEmployee
+    {
+        Task<List<Employee>> GetAllEmployeesAsync(int pageNumber, int pageSize);
+        Task<Employee?> GetEmployeeByIdAsync(int id);
+        Task<Employee> AddEmployeeAsync(Employee employee, IFormFile image);
+        Task<Employee?> UpdateEmployeeAsync(Employee employee, IFormFile? image);
+        Task<Employee?> DeleteEmployeeAsync(int id);
+    }
+}
+
+
+✅ 3. Service: EmployeeService.cs
+
+using CodeFirstEFDEmo.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CodeFirstEFDEmo.Services
+{
+    public class EmployeeService : IEmployee
+    {
+        private readonly EventContext _context;
+        private readonly IWebHostEnvironment _env;
+
+        public EmployeeService(EventContext context, IWebHostEnvironment env)
+        {
+            _context = context;
+            _env = env;
+        }
+
+        public async Task<List<Employee>> GetAllEmployeesAsync(int pageNumber, int pageSize)
+        {
+            return await _context.employees
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<Employee?> GetEmployeeByIdAsync(int id)
+        {
+            return await _context.employees.FindAsync(id);
+        }
+
+        public async Task<Employee> AddEmployeeAsync(Employee employee, IFormFile image)
+        {
+            if (image != null && image.Length > 0)
+            {
+                var imageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                var imagePath = Path.Combine(_env.WebRootPath, "uploads", imageName);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(imagePath)!);
+                using var stream = new FileStream(imagePath, FileMode.Create);
+                await image.CopyToAsync(stream);
+
+                employee.ImagePath = "/uploads/" + imageName;
+            }
+
+            _context.employees.Add(employee);
+            await _context.SaveChangesAsync();
+            return employee;
+        }
+
+        public async Task<Employee?> UpdateEmployeeAsync(Employee emp, IFormFile? image)
+        {
+            var existing = await _context.employees.FindAsync(emp.Id);
+            if (existing == null) return null;
+
+            existing.FirstName = emp.FirstName;
+            existing.LastName = emp.LastName;
+            existing.Email = emp.Email;
+            existing.Age = emp.Age;
+
+            if (image != null && image.Length > 0)
+            {
+                var imageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                var imagePath = Path.Combine(_env.WebRootPath, "uploads", imageName);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(imagePath)!);
+                using var stream = new FileStream(imagePath, FileMode.Create);
+                await image.CopyToAsync(stream);
+
+                existing.ImagePath = "/uploads/" + imageName;
+            }
+
+            await _context.SaveChangesAsync();
+            return existing;
+        }
+
+        public async Task<Employee?> DeleteEmployeeAsync(int id)
+        {
+            var emp = await _context.employees.FindAsync(id);
+            if (emp == null) return null;
+
+            _context.employees.Remove(emp);
+            await _context.SaveChangesAsync();
+            return emp;
+        }
+    }
+}
+
+ 4. EmployeeController.cs
+
+using CodeFirstEFDEmo.Models;
+using CodeFirstEFDEmo.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CodeFirstEFDEmo.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployee _employeeService;
+
+        public EmployeeController(IEmployee employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Employee>>> GetAll(int page = 1, int pageSize = 5)
+        {
+            var result = await _employeeService.GetAllEmployeesAsync(page, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Employee>> GetById(int id)
+        {
+            var emp = await _employeeService.GetEmployeeByIdAsync(id);
+            if (emp == null)
+                return NotFound("Employee not found");
+            return Ok(emp);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Employee>> Create([FromForm] Employee emp, IFormFile image)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _employeeService.AddEmployeeAsync(emp, image);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Employee>> Update(int id, [FromForm] Employee emp, IFormFile? image)
+        {
+            if (id != emp.Id)
+                return BadRequest("ID mismatch");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updated = await _employeeService.UpdateEmployeeAsync(emp, image);
+            if (updated == null)
+                return NotFound("Employee not found");
+
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Employee>> Delete(int id)
+        {
+            var deleted = await _employeeService.DeleteEmployeeAsync(id);
+            if (deleted == null)
+                return NotFound("Employee not found");
+
+            return Ok(deleted);
+        }
+    }
+}
+
+
+✅ 5. Enable Static File Serving and Folder
+In Program.cs:
+
+
+app.UseStaticFiles(); // Enable wwwroot for uploads
+
+Create the folder:
+
+
+wwwroot/uploads/
+
+✅ 6. Register Services in Program.cs
+
+builder.Services.AddScoped<IEmployee, EmployeeService>();
+
+
+Example Form Data to Test in Postman:
+Method: POST
+URL: https://localhost:5001/api/Employee
+Body: form-data
+
+Key: FirstName → Value: John
+
+Key: LastName → Value: Doe
+
+Key: Email → Value: john@example.com
+
+Key: Age → Value: 30
+
+Key: image → Type: File → Select an image
+
+
+Yes give me image delete logic also and return full image URLs so i want this update in backend 
+
+
+ 1. Update EmployeeService.cs
+
+using CodeFirstEFDEmo.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CodeFirstEFDEmo.Services
+{
+    public class EmployeeService : IEmployee
+    {
+        private readonly EventContext _context;
+        private readonly IWebHostEnvironment _env;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public EmployeeService(EventContext context, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+        {
+            _context = context;
+            _env = env;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetBaseUrl()
+        {
+            var request = _httpContextAccessor.HttpContext!.Request;
+            return $"{request.Scheme}://{request.Host}";
+        }
+
+        private string SaveImageToUploads(IFormFile image)
+        {
+            var imageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            var uploadPath = Path.Combine(_env.WebRootPath, "uploads");
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            var fullPath = Path.Combine(uploadPath, imageName);
+            using var stream = new FileStream(fullPath, FileMode.Create);
+            image.CopyTo(stream);
+
+            return "/uploads/" + imageName;
+        }
+
+        private void DeleteImageFile(string? imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath)) return;
+
+            var fullPath = Path.Combine(_env.WebRootPath, imagePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+        }
+
+        public async Task<List<Employee>> GetAllEmployeesAsync(int pageNumber, int pageSize)
+        {
+            var employees = await _context.employees
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            string baseUrl = GetBaseUrl();
+            employees.ForEach(e =>
+            {
+                if (!string.IsNullOrEmpty(e.ImagePath))
+                {
+                    e.ImagePath = baseUrl + e.ImagePath;
+                }
+            });
+
+            return employees;
+        }
+
+        public async Task<Employee?> GetEmployeeByIdAsync(int id)
+        {
+            var emp = await _context.employees.FindAsync(id);
+            if (emp != null && !string.IsNullOrEmpty(emp.ImagePath))
+            {
+                emp.ImagePath = GetBaseUrl() + emp.ImagePath;
+            }
+
+            return emp;
+        }
+
+        public async Task<Employee> AddEmployeeAsync(Employee employee, IFormFile image)
+        {
+            if (image != null && image.Length > 0)
+            {
+                employee.ImagePath = SaveImageToUploads(image);
+            }
+
+            _context.employees.Add(employee);
+            await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(employee.ImagePath))
+                employee.ImagePath = GetBaseUrl() + employee.ImagePath;
+
+            return employee;
+        }
+
+        public async Task<Employee?> UpdateEmployeeAsync(Employee emp, IFormFile? image)
+        {
+            var existing = await _context.employees.FindAsync(emp.Id);
+            if (existing == null) return null;
+
+            existing.FirstName = emp.FirstName;
+            existing.LastName = emp.LastName;
+            existing.Email = emp.Email;
+            existing.Age = emp.Age;
+
+            if (image != null && image.Length > 0)
+            {
+                DeleteImageFile(existing.ImagePath);
+                existing.ImagePath = SaveImageToUploads(image);
+            }
+
+            await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(existing.ImagePath))
+                existing.ImagePath = GetBaseUrl() + existing.ImagePath;
+
+            return existing;
+        }
+
+        public async Task<Employee?> DeleteEmployeeAsync(int id)
+        {
+            var emp = await _context.employees.FindAsync(id);
+            if (emp == null) return null;
+
+            DeleteImageFile(emp.ImagePath);
+            _context.employees.Remove(emp);
+            await _context.SaveChangesAsync();
+
+            emp.ImagePath = null; // optional to avoid exposing deleted image URL
+            return emp;
+        }
+    }
+}
+
+ 2. IEmployee.cs (No change required, but for reference)
+You can leave the interface as is, since implementation logic change doesn't affect method signatures.
+
+🔧 3. Program.cs — Register IHttpContextAccessor
+Make sure this is added:
+
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IEmployee, EmployeeService>();
+
+
+✅ Final Result
+Image is deleted from the server when the employee is deleted or updated with a new image.
+
+All returned ImagePath fields are full URLs like:
+
+
+https://localhost:5001/uploads/abc123.jpg
+
+
+Let me know if you also want:
+
+A separate endpoint to change just the image
+
+A default image when none is uploaded
+
+Integration with Angular or React front end for testing
+
+
+A default image when none is uploaded ...that logic i want 
+
+
+To implement a default image logic when none is uploaded for an Employee, you’ll need to:
+
+Provide a default image in the wwwroot/uploads/ folder.
+
+Ensure the service assigns the default image path if the uploaded image is missing.
+
+Always return the full URL for the default image as well.
+
+✅ Step-by-Step Implementation
+📁 1. Add a Default Image File
+Place a file named default.jpg inside:
+
+
+wwwroot/uploads/default.jpg
+This can be a generic avatar image.
+
+✏️ 2. Update EmployeeService.cs — Use Default Image if None Provided
+🔄 Update/Add the following logic inside AddEmployeeAsync method:
+
+public async Task<Employee> AddEmployeeAsync(Employee employee, IFormFile? image)
+{
+    if (image != null && image.Length > 0)
+    {
+        employee.ImagePath = SaveImageToUploads(image);
+    }
+    else
+    {
+        employee.ImagePath = "/uploads/default.jpg";
+    }
+
+    _context.employees.Add(employee);
+    await _context.SaveChangesAsync();
+
+    employee.ImagePath = GetBaseUrl() + employee.ImagePath;
+    return employee;
+}
+🧠 Also Ensure This Line is Present in GetAllEmployeesAsync and GetEmployeeByIdAsync
+This ensures all returned images (default or uploaded) include the full URL:
+
+
+e.ImagePath = string.IsNullOrEmpty(e.ImagePath)
+    ? GetBaseUrl() + "/uploads/default.jpg"
+    : GetBaseUrl() + e.ImagePath;
+For example, in GetEmployeeByIdAsync:
+
+public async Task<Employee?> GetEmployeeByIdAsync(int id)
+{
+    var emp = await _context.employees.FindAsync(id);
+    if (emp != null)
+    {
+        emp.ImagePath = string.IsNullOrEmpty(emp.ImagePath)
+            ? GetBaseUrl() + "/uploads/default.jpg"
+            : GetBaseUrl() + emp.ImagePath;
+    }
+    return emp;
+}
+
+public async Task<List<Employee>> GetAllEmployeesAsync(int pageNumber, int pageSize)
+{
+    var employees = await _context.employees
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    string baseUrl = GetBaseUrl();
+
+    foreach (var e in employees)
+    {
+        e.ImagePath = string.IsNullOrEmpty(e.ImagePath)
+            ? baseUrl + "/uploads/default.jpg"
+            : baseUrl + e.ImagePath;
+    }
+
+    return employees;
+}
+
+✅ Final Behavior
+Scenario	Resulting ImagePath
+User uploads an image	/uploads/guid-filename.jpg → Full URL returned
+User does not upload an image	/uploads/default.jpg → Full URL returned
+On update, no new image given	Keeps existing image or defaults if none existed
+On deletion	Deletes actual image (not default.jpg)
+
+🔒 Optional: Skip Deletion of Default Image
+In DeleteImageFile, skip deletion if it’s the default:
+
+
+private void DeleteImageFile(string? imagePath)
+{
+    if (string.IsNullOrEmpty(imagePath) || imagePath.Contains("default.jpg"))
+        return;
+
+    var fullPath = Path.Combine(_env.WebRootPath, imagePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+    if (File.Exists(fullPath))
+    {
+        File.Delete(fullPath);
+    }
+}
+
+
+Let me know if you want the same logic applied in an export/download endpoint or if you'd like to display only selected columns like name, email, image URL.
+
+For both options give me the code 
+
+
+Here’s the complete solution to your request, covering:
+
+✅ GetAllEmployeesAsync returning all fields with full image URL or default.
+
+✅ A second option: GetAllEmployeeBasicInfoAsync returning only selected fields (e.g., Name, Email, Image URL).
+
+✅ Corresponding endpoint GetBasicEmployeeList in the controller.
+
+
+
+    ✅ 1. Full Employee Records with Image URL – GetAllEmployeesAsync
+This already exists (but included again for clarity):
+
+
+public async Task<List<Employee>> GetAllEmployeesAsync(int pageNumber, int pageSize)
+{
+    var employees = await _context.employees
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    string baseUrl = GetBaseUrl();
+
+    foreach (var e in employees)
+    {
+        e.ImagePath = string.IsNullOrEmpty(e.ImagePath)
+            ? baseUrl + "/uploads/default.jpg"
+            : baseUrl + e.ImagePath;
+    }
+
+    return employees;
+}
+
+
+✅ 2. Return Only Selected Fields – GetAllEmployeeBasicInfoAsync
+Create a DTO class first:
+
+📁 Models/EmployeeBasicDto.cs
+
+namespace CodeFirstEFDEmo.Models
+{
+    public class EmployeeBasicDto
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+}
+
+
+Add Method in EmployeeService.cs
+
+public async Task<List<EmployeeBasicDto>> GetAllEmployeeBasicInfoAsync(int pageNumber, int pageSize)
+{
+    var employees = await _context.employees
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    string baseUrl = GetBaseUrl();
+
+    var basicList = employees.Select(e => new EmployeeBasicDto
+    {
+        FirstName = e.FirstName,
+        LastName = e.LastName,
+        Email = e.Email,
+        ImageUrl = string.IsNullOrEmpty(e.ImagePath)
+            ? baseUrl + "/uploads/default.jpg"
+            : baseUrl + e.ImagePath
+    }).ToList();
+
+    return basicList;
+}
+
+
+ Add to Interface IEmployee.cs
+
+Task<List<EmployeeBasicDto>> GetAllEmployeeBasicInfoAsync(int pageNumber, int pageSize);
+
+3. Add Endpoint in EmployeeController.cs
+
+[HttpGet("basic")]
+public async Task<ActionResult<List<EmployeeBasicDto>>> GetBasicEmployeeList(int page = 1, int pageSize = 5)
+{
+    var result = await _employeeService.GetAllEmployeeBasicInfoAsync(page, pageSize);
+    return Ok(result);
+}
+
+✅ Example Output (JSON):
+For /api/employee/basic?page=1&pageSize=3
+
+[
+  {
+    "firstName": "Ravi",
+    "lastName": "Kumar",
+    "email": "ravi.kumar@example.com",
+    "imageUrl": "https://localhost:5001/uploads/ravi.jpg"
+  },
+  {
+    "firstName": "Meena",
+    "lastName": "Sharma",
+    "email": "meena@example.com",
+    "imageUrl": "https://localhost:5001/uploads/default.jpg"
+  }
+]
+
+
+Filter this data (e.g., by name/email)
+
+Export as CSV or Excel
+
+✅ 1. Filtering by Name or Email
+✅ 2. Exporting to CSV or Excel file
+✅ 1. Filtering Logic in EmployeeService.cs
+📌 Update GetAllEmployeeBasicInfoAsync to accept a filter:
+🔄 Modify Interface IEmployee.cs
+
+Task<List<EmployeeBasicDto>> GetAllEmployeeBasicInfoAsync(int pageNumber, int pageSize, string? searchTerm);
+
+Update Method in EmployeeService.cs
+
+public async Task<List<EmployeeBasicDto>> GetAllEmployeeBasicInfoAsync(int pageNumber, int pageSize, string? searchTerm)
+{
+    var query = _context.employees.AsQueryable();
+
+    if (!string.IsNullOrEmpty(searchTerm))
+    {
+        query = query.Where(e => e.FirstName!.Contains(searchTerm) || 
+                                 e.LastName!.Contains(searchTerm) || 
+                                 e.Email!.Contains(searchTerm));
+    }
+
+    var employees = await query
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    string baseUrl = GetBaseUrl();
+
+    var result = employees.Select(e => new EmployeeBasicDto
+    {
+        FirstName = e.FirstName,
+        LastName = e.LastName,
+        Email = e.Email,
+        ImageUrl = string.IsNullOrEmpty(e.ImagePath)
+                    ? baseUrl + "/uploads/default.jpg"
+                    : baseUrl + e.ImagePath
+    }).ToList();
+
+    return result;
+}
+✅ 2. Add Filtering Endpoint to EmployeeController.cs
+
+[HttpGet("basic")]
+public async Task<ActionResult<List<EmployeeBasicDto>>> GetBasicEmployeeList(
+    int page = 1, int pageSize = 5, string? search = null)
+{
+    var result = await _employeeService.GetAllEmployeeBasicInfoAsync(page, pageSize, search);
+    return Ok(result);
+}
+✅ 3. Export to CSV or Excel
+✔️ Add NuGet Package:
+For Excel, install:
+
+
+Install-Package ClosedXML
+Or via CLI:
+
+
+dotnet add package ClosedXML
+🔧 Add Export Method to Controller (EmployeeController.cs)
+✅ Export to CSV
+
+[HttpGet("export/csv")]
+public async Task<IActionResult> ExportToCsv(string? search = null)
+{
+    var employees = await _employeeService.GetAllEmployeeBasicInfoAsync(1, int.MaxValue, search);
+
+    var csv = new StringBuilder();
+    csv.AppendLine("FirstName,LastName,Email,ImageUrl");
+
+    foreach (var emp in employees)
+    {
+        csv.AppendLine($"\"{emp.FirstName}\",\"{emp.LastName}\",\"{emp.Email}\",\"{emp.ImageUrl}\"");
+    }
+
+    byte[] buffer = Encoding.UTF8.GetBytes(csv.ToString());
+    return File(buffer, "text/csv", "Employees.csv");
+}
+✅ Export to Excel
+
+using ClosedXML.Excel;
+
+[HttpGet("export/excel")]
+public async Task<IActionResult> ExportToExcel(string? search = null)
+{
+    var employees = await _employeeService.GetAllEmployeeBasicInfoAsync(1, int.MaxValue, search);
+
+    using var workbook = new XLWorkbook();
+    var worksheet = workbook.Worksheets.Add("Employees");
+
+    worksheet.Cell(1, 1).Value = "First Name";
+    worksheet.Cell(1, 2).Value = "Last Name";
+    worksheet.Cell(1, 3).Value = "Email";
+    worksheet.Cell(1, 4).Value = "Image URL";
+
+    int row = 2;
+    foreach (var emp in employees)
+    {
+        worksheet.Cell(row, 1).Value = emp.FirstName;
+        worksheet.Cell(row, 2).Value = emp.LastName;
+        worksheet.Cell(row, 3).Value = emp.Email;
+        worksheet.Cell(row, 4).Value = emp.ImageUrl;
+        row++;
+    }
+
+    using var stream = new MemoryStream();
+    workbook.SaveAs(stream);
+    stream.Seek(0, SeekOrigin.Begin);
+
+    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
+}
+✅ Final API Endpoints Summary:
+HTTP Method	Route	Description
+GET	/api/employee/basic	List paginated + search
+GET	/api/employee/export/csv	Download filtered list as CSV
+GET	/api/employee/export/excel	Download filtered list as Excel
+
+Let me know if you want:
+
+
+
+
+
+
+
+
 
 
