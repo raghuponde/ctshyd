@@ -307,17 +307,13 @@ CREATE TABLE Product (
     FOREIGN KEY (CategoryId) REFERENCES Category(CategoryId)
 );
 ✅ 2. Category Table
-sql
-Copy
-Edit
+
 CREATE TABLE Category (
     CategoryId INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL
 );
 ✅ 3. Cart Table
-sql
-Copy
-Edit
+
 CREATE TABLE Cart (
     CartId INT PRIMARY KEY IDENTITY(1,1),
     UserId INT NOT NULL,
@@ -327,9 +323,7 @@ CREATE TABLE Cart (
     FOREIGN KEY (ProductId) REFERENCES Product(ProductId)
 );
 ✅ 4. Order Table
-sql
-Copy
-Edit
+
 CREATE TABLE [Order] (
     OrderId INT PRIMARY KEY IDENTITY(1,1),
     UserId INT NOT NULL,
@@ -339,9 +333,7 @@ CREATE TABLE [Order] (
     FOREIGN KEY (UserId) REFERENCES [User](UserId)
 );
 ✅ 5. Payment Table
-sql
-Copy
-Edit
+
 CREATE TABLE Payment (
     PaymentId INT PRIMARY KEY IDENTITY(1,1),
     OrderId INT NOT NULL,
@@ -351,9 +343,7 @@ CREATE TABLE Payment (
     FOREIGN KEY (OrderId) REFERENCES [Order](OrderId)
 );
 ✅ 6. User Table
-sql
-Copy
-Edit
+
 CREATE TABLE [User] (
     UserId INT PRIMARY KEY IDENTITY(1,1),
     Username NVARCHAR(50) NOT NULL UNIQUE,
