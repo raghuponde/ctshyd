@@ -781,6 +781,98 @@ Key: Age → Value: 30
 Key: image → Type: File → Select an image
 
 
+Prompt : 
+I am in asp.net core mvc application and in controller folder only i had added API controller Now how do i show the data from 
+    Web Api to MVC Controller by using jquery ajax method for the above coding which i have done i want to use bootswatch Quartz theme here 
+
+Go to layout of shared folder comment the normal available bootstrap css file and add the quartz css okay 
+
+@*   <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel="stylesheet">
+
+Then in the HomeController add Index2 method like this remember when u are actually doing the project the the name u give it as EmpUIController which is consuming the web api 
+
+ public IActionResult Index2()
+ {
+     return View();
+ }
+
+generate an empty view for the above method and remove the default design for it okay 
+
+and paste below code 
+
+@{
+    ViewData["Title"] = "Employee Directory";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="bi bi-people-fill"></i> Employee Directory</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover table-bordered text-center" id="employeeTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            loadEmployees();
+        });
+
+        function loadEmployees() {
+            $.ajax({
+                url: 'https://localhost:7267/api/Demo',
+                type: 'GET',
+                success: function (data) {
+                    var tbody = $("#employeeTable tbody");
+                    tbody.empty();
+
+                    $.each(data, function (i, emp) {
+                        var row = `<tr>
+                                    <td><img src="${emp.imageUrl}" class="img-thumbnail rounded-circle" width="60" height="60" /></td>
+                                    <td>${emp.firstName}</td>
+                                    <td>${emp.lastName}</td>
+                                    <td><i class="bi bi-envelope-fill text-primary"></i> ${emp.email}</td>
+                                </tr>`;
+                        tbody.append(row);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    alert("Failed to load data: " + error);
+                }
+            });
+        }
+    </script>
+}
+
+you see in this above code what i have done is url which i have given is of Demoweb api controller url whhere i had written the code directly and at that time image were not uploaded 
+and demo controller normal crud operations are there here 
+
+Now run the applicationn u can see the design so like this u have to consume  a web api using asp.core mvc controller okay .
+
+so now above web api which is there in EmployeeController I am modfying further  to make it better okay and finally will go for design okay .
+
+
+Prompt :
+---------
 Yes give me image delete logic also and return full image URLs so i want this update in backend 
 
 
