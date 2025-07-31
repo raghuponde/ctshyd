@@ -1382,6 +1382,36 @@ GET	/api/employee/export/excel	Download filtered list as Excel
 Let me know if you want:
 
 
+public async Task<List<EmployeeBasicDto>> GetAllEmployeeBasicInfoAsync(int pageNumber, int pageSize, string? searchTerm)
+{
+    var query = _context.employees.AsQueryable();
+
+    if (!string.IsNullOrEmpty(searchTerm))
+    {
+        query = query.Where(e => e.FirstName!.Contains(searchTerm) || 
+                                 e.LastName!.Contains(searchTerm) || 
+                                 e.Email!.Contains(searchTerm));
+    }
+
+    var employees = await query
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    string baseUrl = GetBaseUrl();
+
+    var result = employees.Select(e => new EmployeeBasicDto
+    {
+        FirstName = e.FirstName,
+        LastName = e.LastName,
+        Email = e.Email,
+        ImageUrl = string.IsNullOrEmpty(e.ImagePath)
+                    ? baseUrl + "/uploads/default.jpg"
+                    : baseUrl + e.ImagePath
+    }).ToList();
+
+    return result;
+}
 
 
 
