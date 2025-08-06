@@ -781,6 +781,7 @@ namespace CodeFirstEFDEmo.Controllers
     [Authorize(Roles="Admin")
     public class AdminController : ControllerBase
     {
+    
 
         [HttpGet("employees")]
         public IEnumerable<string> Get()
@@ -794,3 +795,303 @@ now again if try to use means create a user without admin role okay and then try
 method with that user just now error 403 forbidden will come okay means u will login with other
 than admin user and will try to use this method then 403 error will come okay so using admin
 token only i have to give then i can access above method
+
+When IdentityUser is also a table in your database (e.g., when you want to store users along with other domain entities like employees, posts, etc.),
+here’s what you should do step-by-step:
+
+✅ 1. Create a Custom User Class (if needed)
+Instead of using IdentityUser directly, you can extend it to include custom properties like FullName, Image, etc.
+
+using Microsoft.AspNetCore.Identity;
+
+public class ApplicationUser : IdentityUser
+{
+    public string FullName { get; set; }
+    public string? ImageUrl { get; set; }  // Optional: for profile pictures
+}
+This will still use Identity, but now you control the schema of the AspNetUsers table.
+
+✅ 2. Register Your Custom User with Identity
+In Program.cs, register ApplicationUser instead of IdentityUser:
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<EventContext>()
+    .AddDefaultTokenProviders();
+✅ 3. Update DbContext to Use Custom User
+Make sure your EventContext inherits from IdentityDbContext<ApplicationUser> (not just DbContext):
+
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+public class EventContext : IdentityDbContext<ApplicationUser>
+{
+    public EventContext(DbContextOptions<EventContext> options)
+        : base(options)
+    {
+    }
+
+    // Your other DbSets
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<Employee> Employees { get; set; }
+}
+✅ 4. Apply Migrations
+After updating the model and DbContext:
+
+dotnet ef migrations add AddIdentityUser
+dotnet ef database update
+This will generate and apply tables like:
+
+AspNetUsers (based on ApplicationUser)
+
+AspNetRoles
+
+AspNetUserRoles
+
+AspNetUserClaims, etc.
+
+✅ 5. Use Dependency Injection for UserManager<ApplicationUser>
+You can inject the UserManager and SignInManager in your controllers:
+
+private readonly UserManager<ApplicationUser> _userManager;
+private readonly SignInManager<ApplicationUser> _signInManager;
+
+public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+{
+    _userManager = userManager;
+    _signInManager = signInManager;
+}
+✅ 6. Save and Query Users
+You can now save and query users like this:
+
+var user = new ApplicationUser
+{
+    UserName = "testuser",
+    Email = "test@example.com",
+    FullName = "Test User"
+};
+
+var result = await _userManager.CreateAsync(user, "Test@123");
+✅ Optional: Create Relations with Other Tables
+If your Employee or Post tables relate to users, use ApplicationUser as a foreign key:
+
+public class Post
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+
+    public string UserId { get; set; }
+    public ApplicationUser User { get; set; }
+}
+✅ Summary
+Task	Implementation
+Custom user properties	--->Extend IdentityUser to ApplicationUser
+Register Identity  --->	Use ApplicationUser in AddIdentity
+Use Identity in EF-->	Inherit IdentityDbContext<ApplicationUser>
+Relate other tables	Use ApplicationUser as FK in other entities
+
+so where ever IdentityUser is there there ApplicationUser will come thats all
+
+Let me know if you want a full working example (model, dbcontext, registration, and login API) for Identity integration with JWT and custom fields.
+
+I told yes 
+
+
+Here is a complete working example of integrating ASP.NET Core Identity with JWT Authentication, using:
+
+✅ Custom ApplicationUser class
+
+✅ Identity tables in SQL Server
+
+✅ Registration and Login API
+
+✅ JWT Token generation
+
+✅ STEP 1: Create the Custom ApplicationUser
+// Models/ApplicationUser.cs
+using Microsoft.AspNetCore.Identity;
+
+public class ApplicationUser : IdentityUser
+{
+    public string FullName { get; set; }
+    public string? ProfileImageUrl { get; set; }
+}
+✅ STEP 2: Update the DbContext
+// Data/EventContext.cs
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+public class EventContext : IdentityDbContext<ApplicationUser>
+{
+    public EventContext(DbContextOptions<EventContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<Employee> Employees { get; set; }
+}
+✅ STEP 3: appsettings.json (JWT Section)
+"JWT": {
+  "ValidAudience": "http://localhost:5000",
+  "ValidIssuer": "http://localhost:5000",
+  "Secret": "ThisIsMySuperSecretKey1234567890"
+}
+✅ STEP 4: Program.cs
+using CodeFirstEFDEmo.Models;
+using CodeFirstEFDEmo.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add EF and Identity
+builder.Services.AddDbContext<EventContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("constring")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<EventContext>()
+    .AddDefaultTokenProviders();
+
+// JWT Auth
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:ValidAudience"],
+        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+    };
+});
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthentication();  // Important
+app.UseAuthorization();
+
+app.MapControllers();
+app.Run();
+✅ STEP 5: AuthController
+
+// Controllers/AuthController.cs
+using CodeFirstEFDEmo.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
+{
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IConfiguration _configuration;
+
+    public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+    {
+        _userManager = userManager;
+        _configuration = configuration;
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = model.Username,
+            Email = model.Email,
+            FullName = model.FullName
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        return Ok("User registered successfully");
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    {
+        var user = await _userManager.FindByNameAsync(model.Username);
+        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(3),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo
+            });
+        }
+
+        return Unauthorized();
+    }
+}
+✅ STEP 6: Models for Login/Register
+// Models/RegisterModel.cs
+public class RegisterModel
+{
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public string FullName { get; set; }
+    public string Password { get; set; }
+}
+// Models/LoginModel.cs
+public class LoginModel
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
+✅ STEP 7: Migration and Database Update
+
+dotnet ef migrations add InitialIdentity
+dotnet ef database update
+
+✅ STEP 8: Test Endpoints
+POST /api/Auth/register
+
+POST /api/Auth/login
+
+Both can be tested in Swagger UI or Postman.
+
