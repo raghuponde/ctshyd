@@ -2,3 +2,6 @@ https://olympus1.mygreatlearning.com/online_session/recordings?access_token=eyJ0
 
 time 3:56 onwards check it 
 
+Now open the project which we were doing yesterday codefirstdemo and 
+
+Microsoft.AspNetCore.Identity.Ent
