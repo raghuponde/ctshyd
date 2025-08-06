@@ -2,6 +2,10 @@ https://olympus1.mygreatlearning.com/online_session/recordings?access_token=eyJ0
 
 time 3:56 onwards check it 
 
-Now open the project which we were doing yesterday codefirstdemo and 
+Now open the project which we were doing yesterday codefirstdemo and add packages from nugget manager 
 
-Microsoft.AspNetCore.Identity.Ent
+Microsoft.AspNetCore.Identity.EntityFrameworkCore  of version 8.0.18 
+
+Microsoft.AspNetCore.Authentication.JwtBearer  of version 8.0.18
+
+
