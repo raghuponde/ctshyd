@@ -637,5 +637,7 @@ namespace CodeFirstEFDEmo
     }
 }
 
+Now on EmployeeContoller u put [Authorize] filter and see how you can implement Authentication and Authorization which u have done to AdminController earlier okay 
+
 
 
