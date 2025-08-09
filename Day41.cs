@@ -182,8 +182,9 @@ namespace CodeFirstEFDEmo.Models
     }
 }
 
-I want to create AuthenticationUIController of MVC and want to create Register and Login action methods and want to generate views for  it and in view i want to use jquery ajax method and also i want to use Model Popup for Login view and Register view in Login View only Register link should be there so i want to consume Authentication web api controller 
-In AuthenticationController of web api add logic for logout also and same add it in AuthenticationUIController also jump me to login if i logout 
+I want to create AuthenticationUIController of MVC and want to create Register and Login action methods and want to generate views for  it and in view i want to use jquery 
+ ajax method and also i want to use Model Popup for Login view and Register view in Login View only Register link should be there so i want to consume Authentication web 
+ api controller In AuthenticationController of web api add logic for logout also and same add it in AuthenticationUIController also jump me to login if i logout 
 My Roles are User,Admin and HR so i need drop down in register view for that
 Now for this above prompt i got some code so now let us go with it 
 
