@@ -2,6 +2,7 @@ Prompt :
 ----------
 for the above EmployeeController and for the above coding I had added AuthenticationController like this 
 
+    
 using CodeFirstEFDEmo.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
