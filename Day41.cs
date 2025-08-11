@@ -891,6 +891,191 @@ Note : Also add [AllowAnonymous]  to AuthenticationController okay
 so you can see last i add added script that much only add it in your code now failed to load data error i will not get 
   but when u are not logged in as Admin then if u try to do update it will throw in javascript jquery only 
 simply saying some error but as admin u can update and do all things okay 
-
 now what i want is I want a Message that as u are not admin u cannot chnage this 
+
+
+updated Edit.cshtml  (only ajax method i chnage)
+----------------------
+@{
+    ViewBag.Title = "Edit Employee";
+}
+
+<div class="card mx-auto" style="width: 450px;">
+    <div class="card-header bg-warning text-white">
+        Edit Employee
+    </div>
+    <form id="editForm" enctype="multipart/form-data">
+        <img id="empImg" class="card-img-top" src="" alt="Employee Image" style="height: 300px; object-fit: cover;" />
+        <div class="card-body">
+            <input type="hidden" id="empId" name="Id" />
+
+            <div class="mb-2">
+                <label>First Name</label>
+                <input type="text" class="form-control" id="firstName" name="FirstName" required />
+            </div>
+
+            <div class="mb-2">
+                <label>Last Name</label>
+                <input type="text" class="form-control" id="lastName" name="LastName" required />
+            </div>
+
+            <div class="mb-2">
+                <label>Email</label>
+                <input type="email" class="form-control" id="email" name="Email" required />
+            </div>
+
+            <div class="mb-2">
+                <label>Age</label>
+                <input type="number" class="form-control" id="age" name="Age" min="1" max="100" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Change Image</label>
+                <input type="file" class="form-control" name="image" id="imageInput" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Update</button>
+            <a href="/EmployeeUI/Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        $.get(`/api/Employee/${id}`, function (emp) {
+            $("#empId").val(emp.id);
+            $("#firstName").val(emp.firstName);
+            $("#lastName").val(emp.lastName);
+            $("#email").val(emp.email);
+            $("#age").val(emp.age);
+            $("#empImg").attr("src", emp.imagePath);
+        });
+
+        $("#editForm").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            const id = $("#empId").val();
+
+            $.ajax({
+                url: `/api/Employee/${id}`,
+                type: "PUT",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    alert("Employee updated successfully!");
+                    window.location.href = "/EmployeeUI/Index";
+                },
+                error: function (xhr) {
+                    if (xhr.status === 403) {
+                        const msg = (xhr.responseJSON && xhr.responseJSON.message) || "You are not an Admin.";
+                        alert(msg);
+                    } else if (xhr.status === 401) {
+                        alert("Please log in first.");
+                        window.location.href = "/AuthenticationUI/Login";
+                    } else {
+                        alert("Error: " + (xhr.responseText || xhr.statusText));
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+updated Delete.cshtml  (here also just ajax method chnaged) 
+--------------------
+@{
+    ViewBag.Title = "Delete Employee";
+}
+
+<div class="card mx-auto" style="width: 450px;">
+    <div class="card-header bg-danger text-white">
+        Delete Confirmation
+    </div>
+    <div class="card-body text-center">
+        <img id="empImg" src="" alt="Employee Image" class="img-fluid mb-3" style="height: 300px; object-fit: cover;" />
+        <h4 id="empName"></h4>
+        <p id="empEmail"></p>
+        <p id="empAge"></p>
+
+        <button class="btn btn-danger" id="btnDelete">Confirm Delete</button>
+        <a href="/EmployeeUI/Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        $.get(`/api/Employee/${id}`, function (emp) {
+            $("#empImg").attr("src", emp.imagePath);
+            $("#empName").text(emp.firstName + " " + emp.lastName);
+            $("#empEmail").text(emp.email);
+            $("#empAge").text("Age: " + emp.age);
+        });
+
+        $("#btnDelete").click(function () {
+            if (confirm("Are you sure you want to delete this employee?")) {
+                $.ajax({
+                    url: `/api/Employee/${id}`,
+                    type: "DELETE",
+                    success: function () { /* ... */ },
+                    error: function (xhr) {
+                        if (xhr.status === 403) alert("You are not an Admin.");
+                        else if (xhr.status === 401) window.location.href = "/AuthenticationUI/Login";
+                        else alert("Error: " + (xhr.responseText || xhr.statusText));
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+updated Export.cshtml (just added two status code ) 
+---------------------
+@{
+    ViewBag.Title = "Export Employee Data";
+}
+
+<h3>Export Employee Data</h3>
+
+<div class="mb-3">
+    <input type="text" id="searchText" class="form-control" placeholder="Search term (optional)" />
+</div>
+<button id="btnExport" class="btn btn-success">Export to Excel</button>
+<script>
+    $("#btnExport").click(async function () {
+        const token = sessionStorage.getItem("jwt");
+        const search = $("#searchText").val() || "";
+
+        const res = await fetch(`/api/Employee/export/excel?search=${encodeURIComponent(search)}`, {
+            method: "GET",
+            headers: { "Authorization": "Bearer " + token }
+        });
+        if (res.status === 403) {
+            const body = await res.json().catch(() => ({}));
+            alert(body.message || "You are not an Admin.");
+            return;
+        }
+        if (res.status === 401) { window.location.href = "/AuthenticationUI/Login"; return; }
+
+        if (!res.ok) { alert("Export failed: " + res.status); return; }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Employees.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    });
+</script>
+
 
