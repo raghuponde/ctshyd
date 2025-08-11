@@ -641,5 +641,256 @@ namespace CodeFirstEFDEmo
 
 Now on EmployeeContoller u put [Authorize] filter and see how you can implement Authentication and Authorization which u have done to AdminController earlier okay 
 
+so now i had changed in EmployeeController like this 
 
+using ClosedXML.Excel;
+using CodeFirstEFDEmo.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CodeFirstEFDEmo.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployee _employeeService;
+
+        public EmployeeController(IEmployee employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<List<Employee>>> GetAll(int page = 1, int pageSize = 5)
+        {
+            var result = await _employeeService.GetAllEmployeesAsync(page, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,HR,User")]
+        public async Task<ActionResult<Employee>> GetById(int id)
+        {
+            var emp = await _employeeService.GetEmployeeByIdAsync(id);
+            if (emp == null)
+                return NotFound("Employee not found");
+            return Ok(emp);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Employee>> Create([FromForm] Employee emp, IFormFile? image)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _employeeService.AddEmployeeAsync(emp, image);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Employee>> Update(int id, [FromForm] Employee emp, IFormFile? image)
+        {
+            if (id != emp.Id)
+                return BadRequest("ID mismatch");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updated = await _employeeService.UpdateEmployeeAsync(emp, image);
+            if (updated == null)
+                return NotFound("Employee not found");
+
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Employee>> Delete(int id)
+        {
+            var deleted = await _employeeService.DeleteEmployeeAsync(id);
+            if (deleted == null)
+                return NotFound("Employee not found");
+
+            return Ok(deleted);
+        }
+
+        //[HttpGet("basic")]
+        //public async Task<ActionResult<List<EmployeeBasicDto>>> GetBasicEmployeeList(int page = 1, int pageSize = 5)
+        //{
+        //    var result = await _employeeService.GetAllEmployeeBasicInfoAsync(page, pageSize);
+        //    return Ok(result);
+        //}
+
+        [HttpGet("basic")]
+        [Authorize(Roles = "Admin,HR,User")]
+        public async Task<ActionResult<List<EmployeeBasicDto>>> GetBasicEmployeeList(
+    int page = 1, int pageSize = 5, string? search = null)
+        {
+            var result = await _employeeService.GetAllEmployeeBasicInfoAsync(page, pageSize, search);
+            return Ok(result);
+        }
+
+        [HttpGet("export/excel")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ExportToExcel(string? search = null)
+        {
+            var employees = await _employeeService.GetAllEmployeeBasicInfoAsync(1, int.MaxValue, search);
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Employees");
+
+            worksheet.Cell(1, 1).Value = "First Name";
+            worksheet.Cell(1, 2).Value = "Last Name";
+            worksheet.Cell(1, 3).Value = "Email";
+            worksheet.Cell(1, 4).Value = "Image URL";
+
+            int row = 2;
+            foreach (var emp in employees)
+            {
+                worksheet.Cell(row, 1).Value = emp.FirstName;
+                worksheet.Cell(row, 2).Value = emp.LastName;
+                worksheet.Cell(row, 3).Value = emp.Email;
+                worksheet.Cell(row, 4).Value = emp.ImageUrl;
+                row++;
+            }
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
+        }
+    }
+}
+
+as i had kept Authorize on top of the controller every time i have to send token so add this in _Layout last section add it 
+
+
+updated _Layout code 
+----------------------
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title - Employee UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <!-- Header with Welcome and Logout -->
+    <header class="bg-primary text-white p-3 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Employee Management Dashboard</h2>
+        <div>
+            @if (Context.Session.GetString("username") != null)
+            {
+                <span class="me-3">Welcome, <strong>@Context.Session.GetString("username")</strong></span>
+                <a href="/AuthenticationUI/Logout" class="btn btn-light btn-sm">Logout</a>
+            }
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3 bg-light p-3">
+                <div class="accordion" id="sidebarAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingEmp">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmp" aria-expanded="true">
+                                Employee Management
+                            </button>
+                        </h2>
+                        <div id="collapseEmp" class="accordion-collapse collapse show" data-bs-parent="#sidebarAccordion">
+                            <div class="accordion-body">
+                                <a href="/EmployeeUI/Index" class="d-block mb-2" style="color:black">Employee Data</a>
+                            </div>
+                            <div class="accordion-body">
+                                <a href="/EmployeeUI/Export" class="d-block mb-2" style="color:black">Employee Export</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 mt-3">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-secondary text-white text-center p-2 mt-5">
+        <p>&copy; 2025 Employee UI App</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery UI for draggable modals -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+        // attach Bearer token to all jQuery AJAX calls
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                const token = sessionStorage.getItem("jwt");
+                if (token) xhr.setRequestHeader("Authorization", "Bearer " + token);
+            }
+        });
+    </script>
+</body>
+</html>
+
+A plain <a href="/api/Employee/export/excel"> cannot add headers, so switch to a JS download using fetch with the token and then create a Blob:
+udpate Export.cshtml
+--------------------
+@{
+    ViewBag.Title = "Export Employee Data";
+}
+
+<h3>Export Employee Data</h3>
+
+<div class="mb-3">
+    <input type="text" id="searchText" class="form-control" placeholder="Search term (optional)" />
+</div>
+<button id="btnExport" class="btn btn-success">Export to Excel</button>
+<script>
+    $("#btnExport").click(async function () {
+        const token = sessionStorage.getItem("jwt");
+        const search = $("#searchText").val() || "";
+
+        const res = await fetch(`/api/Employee/export/excel?search=${encodeURIComponent(search)}`, {
+            method: "GET",
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!res.ok) { alert("Export failed: " + res.status); return; }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Employees.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    });
+</script>
+
+Note : Also add [AllowAnonymous]  to AuthenticationController okay 
+
+
+so you can see last i add added script that much only add it in your code now failed to load data error i will not get 
+  but when u are not logged in as Admin then if u try to do update it will throw in javascript jquery only 
+simply saying some error but as admin u can update and do all things okay 
+
+now what i want is I want a Message that as u are not admin u cannot chnage this 
 
