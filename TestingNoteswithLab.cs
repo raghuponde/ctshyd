@@ -73,13 +73,75 @@ change the password and then chnage the expected value when matched it is true o
 
 Mock Testing 
 ------------------
+Mock Test :
+------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MockExample
+{
+    public class  CheckEmployee
+    {
+        public virtual Boolean checkemp()
+		{
+            throw new NotImplementedException();
+		}
+
+        public virtual int substract(int a ,int b)
+		{
+            throw new NotImplementedException();
+		}
+
+    }
+    public  class ProcessEmployee
+	{
+        public int insertEmployee(CheckEmployee emp)
+
+		{
+            emp.checkemp();
+            // logic for implemting inseting employee using ado.net 
+
+          
+            emp.substract(4, 3);
+
+            return 1;
+
+        }
+    }
+}
+
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using MockExample;
+using Moq;
+
+namespace UnitTestProject1
+{
+	[TestClass]
+	public class Mocktesting
+	{
+		[TestMethod]
+		public void TestMethod1()
+		{
+			Mock<CheckEmployee> chk = new Mock<CheckEmployee>();
+			chk.Setup(x => x.checkemp()).Returns(true);
+			chk.Setup(x => x.substract(4, 3)).Returns(1);
+
+			ProcessEmployee objprocess = new ProcessEmployee();
+			Assert.AreEqual(objprocess.insertEmployee(chk.Object), true);
+			Assert.AreEqual(objprocess.insertEmployee(chk.Object), 1);
 
 
 
 
 
-
-
+		}
+	}
+}
 
 Lab1 
 -------
