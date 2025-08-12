@@ -88,7 +88,11 @@ namespace TestProject2
     }
 }
 
-add another libary project and give name as MockExample
+add another libary project and give name as MockExample here i want to do mocktesting means some code which is not implemented 
+completely i cannot test that code so for that thing what i will do is forcefully i will make the code to pass using mock testing 
+as some other developer is dependent on code which is not implemeted fully so we go for mock testing here check employee 
+code is not implemted fully but Process employee is depending on check employe so i will install moq package from nugget 
+and pass checkemployee code into moq 
 
 namespace MockExample
 {
