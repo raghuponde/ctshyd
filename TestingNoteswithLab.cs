@@ -1,48 +1,62 @@
 Introduction to Unit Testing in C#:
 -----------------------------------------
-Unit testing is the process of testing individual units or components of an application in isolation to ensure that they function as expected. In C#, 
-  unit tests are typically written using frameworks like NUnit, MSTest, or XUnit. Here, I'll provide a basic understanding of unit testing using NUnit
-	  as an example.
+Unit testing is the process of testing individual units or components of an application in isolation
+to ensure that they function as expected. In C#, 
+  unit tests are typically written using frameworks like NUnit, MSTest, or XUnit.
+  Here, I'll provide a basic understanding of unit testing using NUnit
+  as an example.
 
-create one project of class libary means C#   ,All Platforms and library  here select core libray project not of .net framework  and while 
+create one project of class libary means C#   ,All Platforms and library  here select core 
+libray project not of .net framework  and while 
 	creating name give project name as PassWordStrength and solution name as 
 TestingProjects and create a project 
 
-now in the class library project write this code like this so class1 name has to be changed PasswordStrengthMeter and 
+now in the class library project write this code like this so class1 name has to be changed 
+PasswordStrengthMeter and 
 if  u want u can change the file name as to same 
 
 
-  
- public class PasswordStrengthMeter
- {
-     public static int GetPasswordStrength(string password)
-     {
-         if (string.IsNullOrEmpty(password))
-             return 0;
-         int result = 0;
-         if (password.Length > 8)
-             result = result + 1;
-         if (password.Any(char.IsUpper))
-             result = result + 1;
-         if (password.Any(char.IsLower))
-             result = result + 1;
-         string specialCh = @"%!@#$%^&*()?/>.<,:;'\|}]{[_~`+=-" + "\"";
-         char[] specialChArray = specialCh.ToCharArray();
-         foreach (char ch in specialChArray)
-         {
-             if (password.Contains(ch))
+namespace PassWordStrength
+{
+    public class PasswordStrengthMeter
+    {
+        public static int GetPassWordStrength(string password)
+        {
+            if(string.IsNullOrEmpty(password))
+            {
+                return 0;
+            }
+            int result = 0;
+            if(password.Length > 8)
+            {
+                result = result + 1;
+            }
+            if(password.Any(char.IsUpper))
+            {
+                result = result + 1;
+            }
+            if (password.Any(char.IsLower))
+            {
+                result = result + 1;
+            }
+            if(password.Any(char.IsDigit))
+            {
+                result = result + 1;
+            }
+            string specialCh = @"%!@#$%^&*()?/>.<,:;'\|}]{[_~`+=-" + "\"";
+            char[] specialChArray = specialCh.ToCharArray();
+            foreach (char ch in specialChArray)
+            {
+                if (password.Contains(ch))
 
-                 result = result + 1;
-         }
-         if (password.Any(char.IsDigit))
-             result = result + 1;
+                    result = result + 1;
+            }
 
-         return result;
+            return result;
+        }
 
-
-     }
-
- }
+    }
+}
 
 Now build the solution u will get the DLL file for this project alone as main method is not there 
 
@@ -52,98 +66,111 @@ in this testing project u need to add the DLL reference and provide the namespac
 
 remove the default class which u are getting and add this class like this 
 
-  [TestFixture]
- public class Tests 
- {
+using PassWordStrength;
+namespace TestProject2
+{
    
+    [TestFixture]
+    public class Tests 
+    {
+        [Test]
+        public void Test1()
+        {
+            // arrange 
+            string password = "Rajesh#123";
+            int expected = 6;
+            //act 
+            int actual = PasswordStrengthMeter.
+                GetPassWordStrength(password);
+            //assert
+            Assert.AreEqual(expected, actual);
+        }
+    }
+}
 
-     [Test]
-     public void TestMethod1()
-     {
-         //arrange
-         string password = "Rajesh#123@";
-         int expected = 6;
-         // act 
-         int actual = PasswordStrengthMeter.GetPasswordStrength(password);
-         //assert
-         Assert.AreEqual(expected, actual);
-     }
- }
-
-see here i am arranging and then acting means implememting then asserting means testing 
-
-change the password and then chnage the expected value when matched it is true otherwise it is false okay here three AAA we have to use arrange act and assert 
-
-Mock Testing 
-------------------
-Mock Test :
-------------
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+add another libary project and give name as MockExample
 
 namespace MockExample
 {
     public class  CheckEmployee
     {
         public virtual Boolean checkemp()
-		{
+        {
             throw new NotImplementedException();
-		}
-
-        public virtual int substract(int a ,int b)
-		{
-            throw new NotImplementedException();
-		}
-
+        }
     }
-    public  class ProcessEmployee
-	{
-        public int insertEmployee(CheckEmployee emp)
+    public class ProcessEmployee
+    {
+        public bool insertEmployee(CheckEmployee emp)
 
-		{
+        {
             emp.checkemp();
             // logic for implemting inseting employee using ado.net 
 
-          
-            emp.substract(4, 3);
 
-            return 1;
+           return true;
+
+            
 
         }
     }
 }
 
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+Now build the solution again and agin add MockExample dll into current  testing project 
+
+includ namespace in test project as using MockExample;
+
+now add Mock package from nugget package manager 
+
+go to test project dependecies right clik and say Manage nugget packages
+
+browse and in search type Moq 4.18.4 and install it and add another namespace using Moq;
+
+
 using MockExample;
 using Moq;
-
-namespace UnitTestProject1
+using NUnit.Framework;
+using PassWordStrength;
+namespace TestProject2
 {
-	[TestClass]
-	public class Mocktesting
-	{
-		[TestMethod]
-		public void TestMethod1()
-		{
-			Mock<CheckEmployee> chk = new Mock<CheckEmployee>();
-			chk.Setup(x => x.checkemp()).Returns(true);
-			chk.Setup(x => x.substract(4, 3)).Returns(1);
 
-			ProcessEmployee objprocess = new ProcessEmployee();
-			Assert.AreEqual(objprocess.insertEmployee(chk.Object), true);
-			Assert.AreEqual(objprocess.insertEmployee(chk.Object), 1);
+    [TestFixture]
+    public class Tests
+    {
+        [Test]
+        public void Test1()
+        {
+            // arrange 
+            string password = "Rajesh#123";
+            int expected = 5;// if kept 6 it will fail
+            //act 
+            int actual = PasswordStrengthMeter.
+                GetPassWordStrength(password);
+            //assert
+            Assert.AreEqual(expected, actual);
+        }
+    }
+
+    [TestFixture]
+    public class Mocktesting
+    {
+        [Test]
+        public void TestMethod1()
+        {
+            Mock<CheckEmployee> chk = new Mock<CheckEmployee>();
+            chk.Setup(x => x.checkemp()).Returns(true);
+
+
+            ProcessEmployee objprocess = new ProcessEmployee();
+            Assert.AreEqual(objprocess.insertEmployee(chk.Object), true);
 
 
 
 
 
-		}
-	}
+        }
+    }
 }
 
 Lab1 
