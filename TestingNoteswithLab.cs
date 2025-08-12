@@ -1,12 +1,15 @@
 Introduction to Unit Testing in C#:
 -----------------------------------------
 Unit testing is the process of testing individual units or components of an application in isolation to ensure that they function as expected. In C#, 
-  unit tests are typically written using frameworks like NUnit, MSTest, or XUnit. Here, I'll provide a basic understanding of unit testing using NUnit as an example.
+  unit tests are typically written using frameworks like NUnit, MSTest, or XUnit. Here, I'll provide a basic understanding of unit testing using NUnit
+	  as an example.
 
-create one project of class libary means C#   ,All Platforms and library  here select core libray project not of .net framework  and while creating name give project name as PassWordStrength and solution name as 
+create one project of class libary means C#   ,All Platforms and library  here select core libray project not of .net framework  and while 
+	creating name give project name as PassWordStrength and solution name as 
 TestingProjects and create a project 
 
-now in the class library project write this code like this so class1 name has to be changed PasswordStrengthMeter and if  u want u can change the file name as to same 
+now in the class library project write this code like this so class1 name has to be changed PasswordStrengthMeter and 
+if  u want u can change the file name as to same 
 
 
   
